@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e ' *)",
+      "Bash(pkill -f \"next dev\")",
+      "Bash(npx next *)",
+      "Bash(mkdir -p /tmp/blogimg)",
+      "Bash(curl -sL -o /tmp/blogimg/test1.png -w \"HTTP:%{http_code} SIZE:%{size_download} TYPE:%{content_type}\\\\n\" \"https://images.openai.com/static-rsc-4/YPKgdbdd-Bw8RMwAxnjqzkl73LHf1ofjDLYa89hqKpR49pwOAEAxAS63x_uM_gWjD_0Po0xkyGAsd2_lOQqXYwho2qwcBIJmLDlGtdFAAplsiMDx_RwRsqdVM1PkIK0kQ0Gn2w5T2Wzrl8H1RUe2HsGLR3ecaYPhB5WyZQRg_DDwg_NEskQ6G0e5bKef9wAL?purpose=fullsize\")",
+      "Read(//tmp/blogimg/**)",
+      "Bash(node scripts/add-blog-ai-tools-2026.js)",
+      "Bash(curl -s \"http://localhost:3000/tools/word-counter\")",
+      "Bash(curl -s \"http://localhost:3000/blog/10-youtube-seo-tips-to-rank-number-1-in-2024\")"
+    ]
+  }
+}
