@@ -72,7 +72,7 @@ export default function AdminAnalyticsPage() {
         <p className="text-sm text-muted-foreground">
           {process.env.NEXT_PUBLIC_GA_ID
             ? `✅ Google Analytics 4 is connected (ID: ${process.env.NEXT_PUBLIC_GA_ID}). Visit your `
-            : '⚠️ Google Analytics is not configured. Add your GA4 Measurement ID to .env.local to enable tracking.'}
+            : '⚠️ Google Analytics is not configured. Set NEXT_PUBLIC_GA_ID in .env.local (local) and in Vercel → Project → Settings → Environment Variables (Production + Preview), then redeploy.'}
           {process.env.NEXT_PUBLIC_GA_ID && (
             <a href="https://analytics.google.com" target="_blank" rel="noopener noreferrer" className="text-brand-500 hover:underline">Google Analytics dashboard</a>
           )}

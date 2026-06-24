@@ -41,7 +41,6 @@ export const config = {
   },
   analytics: {
     gaId: optionalEnv('NEXT_PUBLIC_GA_ID', ''),
-    gscVerification: optionalEnv('NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION', ''),
   },
   ads: {
     adsenseClient: optionalEnv('NEXT_PUBLIC_GOOGLE_ADSENSE_CLIENT', ''),
