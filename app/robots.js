@@ -4,6 +4,10 @@ export default function robots() {
   return {
     rules: [
       {
+        userAgent: 'Mediapartners-Google',
+        allow: '/',
+      },
+      {
         userAgent: '*',
         allow: '/',
         disallow: ['/admin/', '/api/'],
