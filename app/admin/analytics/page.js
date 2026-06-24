@@ -70,13 +70,13 @@ export default function AdminAnalyticsPage() {
       <div className="bg-card border border-border rounded-2xl p-6">
         <h2 className="font-bold mb-4">Google Analytics Integration</h2>
         <p className="text-sm text-muted-foreground">
-          {process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID
-            ? `✅ Google Analytics 4 is connected (ID: ${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID}). Visit your `
+          {process.env.NEXT_PUBLIC_GA_ID
+            ? `✅ Google Analytics 4 is connected (ID: ${process.env.NEXT_PUBLIC_GA_ID}). Visit your `
             : '⚠️ Google Analytics is not configured. Add your GA4 Measurement ID to .env.local to enable tracking.'}
-          {process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID && (
+          {process.env.NEXT_PUBLIC_GA_ID && (
             <a href="https://analytics.google.com" target="_blank" rel="noopener noreferrer" className="text-brand-500 hover:underline">Google Analytics dashboard</a>
           )}
-          {process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID && ' for detailed reports.'}
+          {process.env.NEXT_PUBLIC_GA_ID && ' for detailed reports.'}
         </p>
       </div>
     </div>

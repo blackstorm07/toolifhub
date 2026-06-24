@@ -37,7 +37,7 @@ export default function AdminSettingsPage() {
   const config = {
     appName: process.env.NEXT_PUBLIC_APP_NAME,
     appUrl: process.env.NEXT_PUBLIC_APP_URL,
-    gaId: process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID,
+    gaId: process.env.NEXT_PUBLIC_GA_ID,
     adsenseClient: process.env.NEXT_PUBLIC_GOOGLE_ADSENSE_CLIENT,
   };
 
@@ -56,7 +56,7 @@ export default function AdminSettingsPage() {
         <EnvRow label="App Name" envKey="NEXT_PUBLIC_APP_NAME" value={config.appName} required />
         <EnvRow label="App URL" envKey="NEXT_PUBLIC_APP_URL" value={config.appUrl} required />
         <EnvRow label="JWT Secret" envKey="JWT_SECRET" value="[server-side only]" required />
-        <EnvRow label="Google Analytics 4 ID" envKey="NEXT_PUBLIC_GOOGLE_ANALYTICS_ID" value={config.gaId} />
+        <EnvRow label="Google Analytics 4 ID" envKey="NEXT_PUBLIC_GA_ID" value={config.gaId} />
         <EnvRow label="Google AdSense Client ID" envKey="NEXT_PUBLIC_GOOGLE_ADSENSE_CLIENT" value={config.adsenseClient} />
       </div>
 

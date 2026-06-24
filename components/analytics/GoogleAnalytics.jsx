@@ -2,15 +2,22 @@
 
 import Script from 'next/script';
 import { usePathname, useSearchParams } from 'next/navigation';
-import { useEffect, Suspense } from 'react';
+import { useEffect, useRef, Suspense } from 'react';
 import { GA_TRACKING_ID, trackPageView } from '@/lib/analytics';
 
 function GAPageTracker() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const isFirstLoad = useRef(true);
 
   useEffect(() => {
     if (!GA_TRACKING_ID) return;
+    // The gtag-init script below already fires the page_view for the initial
+    // load, so skip it here to avoid sending a duplicate event on mount.
+    if (isFirstLoad.current) {
+      isFirstLoad.current = false;
+      return;
+    }
     const url = pathname + (searchParams.toString() ? `?${searchParams}` : '');
     trackPageView(url);
   }, [pathname, searchParams]);
@@ -35,9 +42,7 @@ export default function GoogleAnalytics() {
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', '${GA_TRACKING_ID}', {
-              page_path: window.location.pathname,
-            });
+            gtag('config', '${GA_TRACKING_ID}');
           `,
         }}
       />
