@@ -26,7 +26,28 @@ export default function AdminToolsPage() {
     setLoading(false);
   };
 
-  useEffect(() => { fetchData(); }, []);
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadTools() {
+      const [toolsRes, catRes] = await Promise.all([
+        fetch('/api/admin/tools?limit=100'),
+        fetch('/api/admin/categories'),
+      ]);
+      const toolsData = await toolsRes.json();
+      const catData = await catRes.json();
+      if (!cancelled) {
+        setTools(toolsData.tools || []);
+        setCategories(catData.categories || []);
+        setLoading(false);
+      }
+    }
+
+    loadTools();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const filteredTools = tools.filter(t =>
     t.title?.toLowerCase().includes(search.toLowerCase()) ||

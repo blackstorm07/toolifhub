@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { Copy, Check } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { trackToolUsage } from '@/lib/analytics';
@@ -17,14 +17,19 @@ const TEMPLATES = [
 export default function MetaDescriptionGenerator() {
   const [keyword, setKeyword] = useState('');
   const [copiedIdx, setCopiedIdx] = useState(null);
-  const [tracked, setTracked] = useState(false);
+  const trackedRef = useRef(false);
 
   const descriptions = useMemo(() => {
     const kw = keyword.trim();
     if (!kw) return [];
-    if (!tracked) { trackToolUsage('meta-description-generator', 'Meta Description Generator'); setTracked(true); }
     return TEMPLATES.map((t) => t(kw));
-  }, [keyword, tracked]);
+  }, [keyword]);
+
+  useEffect(() => {
+    if (!keyword.trim() || trackedRef.current) return;
+    trackToolUsage('meta-description-generator', 'Meta Description Generator');
+    trackedRef.current = true;
+  }, [keyword]);
 
   const handleCopy = (text, idx) => {
     copyToClipboard(text);

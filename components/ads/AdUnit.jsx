@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
 const ADSENSE_CLIENT = process.env.NEXT_PUBLIC_GOOGLE_ADSENSE_CLIENT;
 
@@ -12,16 +12,16 @@ export default function AdUnit({
   style = {},
 }) {
   const adRef = useRef(null);
-  const [loaded, setLoaded] = useState(false);
+  const initializedRef = useRef(false);
 
   useEffect(() => {
-    if (!ADSENSE_CLIENT || !slot) return;
+    if (!ADSENSE_CLIENT || !slot || initializedRef.current) return;
     try {
       if (typeof window !== 'undefined' && window.adsbygoogle) {
         (window.adsbygoogle = window.adsbygoogle || []).push({});
-        setLoaded(true);
+        initializedRef.current = true;
       }
-    } catch (e) {
+    } catch {
       // AdSense not loaded yet
     }
   }, [slot]);

@@ -20,7 +20,23 @@ export default function AdminBlogsPage() {
     setLoading(false);
   };
 
-  useEffect(() => { fetchData(); }, []);
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadBlogs() {
+      const res = await fetch('/api/admin/blogs');
+      const data = await res.json();
+      if (!cancelled) {
+        setBlogs(data.blogs || []);
+        setLoading(false);
+      }
+    }
+
+    loadBlogs();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const openAdd = () => {
     setEditing(null);

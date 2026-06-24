@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useDebounce } from './useDebounce';
 
 export function useSearch(initialQuery = '') {
@@ -9,36 +9,48 @@ export function useSearch(initialQuery = '') {
 
   const debouncedQuery = useDebounce(query, 300);
 
-  const search = useCallback(async (q) => {
-    if (!q || q.trim().length < 2) {
-      setResults({ tools: [], categories: [] });
-      return;
-    }
-
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const res = await fetch(`/api/search?q=${encodeURIComponent(q.trim())}`);
-      if (!res.ok) throw new Error('Search failed');
-      const data = await res.json();
-      setResults(data);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
   useEffect(() => {
-    search(debouncedQuery);
-  }, [debouncedQuery, search]);
+    let cancelled = false;
 
-  const clearSearch = useCallback(() => {
+    async function runSearch() {
+      const q = debouncedQuery?.trim() ?? '';
+      if (q.length < 2) {
+        if (!cancelled) {
+          setResults({ tools: [], categories: [] });
+          setIsLoading(false);
+          setError(null);
+        }
+        return;
+      }
+
+      if (!cancelled) {
+        setIsLoading(true);
+        setError(null);
+      }
+
+      try {
+        const res = await fetch(`/api/search?q=${encodeURIComponent(q)}`);
+        if (!res.ok) throw new Error('Search failed');
+        const data = await res.json();
+        if (!cancelled) setResults(data);
+      } catch (err) {
+        if (!cancelled) setError(err.message);
+      } finally {
+        if (!cancelled) setIsLoading(false);
+      }
+    }
+
+    runSearch();
+    return () => {
+      cancelled = true;
+    };
+  }, [debouncedQuery]);
+
+  const clearSearch = () => {
     setQuery('');
     setResults({ tools: [], categories: [] });
     setError(null);
-  }, []);
+  };
 
   return {
     query,

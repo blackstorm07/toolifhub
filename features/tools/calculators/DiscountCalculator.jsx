@@ -122,7 +122,7 @@ export default function DiscountCalculator() {
           </div>
 
           <div className="flex items-center justify-center gap-2 p-4 bg-brand-50 dark:bg-brand-900/20 border border-brand-200 dark:border-brand-800 rounded-xl">
-            <span className="text-sm text-muted-foreground">That's</span>
+            <span className="text-sm text-muted-foreground">That&apos;s</span>
             <span className="text-2xl font-bold text-brand-600">{result.percent.toFixed(1)}%</span>
             <span className="text-sm text-muted-foreground">off the original price!</span>
           </div>

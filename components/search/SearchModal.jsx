@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import { Search, X, ArrowRight, Tag } from 'lucide-react';
 import { trackSearch } from '@/lib/analytics';
+import { useIsClient } from '@/hooks/useIsClient';
 
 function useDebounce(value, delay) {
   const [debouncedValue, setDebouncedValue] = useState(value);
@@ -21,19 +22,15 @@ export default function SearchModal({ open, onClose }) {
   const [loading, setLoading] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
   const inputRef = useRef(null);
-  const [mounted, setMounted] = useState(false);
+  const mounted = useIsClient();
   const router = useRouter();
   const debouncedQuery = useDebounce(query, 300);
 
-  useEffect(() => setMounted(true), []);
-
   // Focus input when modal opens
   useEffect(() => {
-    if (open) {
-      setTimeout(() => inputRef.current?.focus(), 50);
-      setQuery('');
-      setResults({ tools: [], categories: [] });
-    }
+    if (!open) return;
+    const timer = setTimeout(() => inputRef.current?.focus(), 50);
+    return () => clearTimeout(timer);
   }, [open]);
 
   useEffect(() => {
@@ -56,20 +53,40 @@ export default function SearchModal({ open, onClose }) {
 
   // Search
   useEffect(() => {
-    if (!debouncedQuery || debouncedQuery.length < 2) {
-      setResults({ tools: [], categories: [] });
-      return;
+    if (!open) return;
+
+    let cancelled = false;
+
+    async function runSearch() {
+      if (!debouncedQuery || debouncedQuery.length < 2) {
+        if (!cancelled) {
+          setResults({ tools: [], categories: [] });
+          setLoading(false);
+        }
+        return;
+      }
+
+      if (!cancelled) setLoading(true);
+
+      try {
+        const response = await fetch(`/api/search?q=${encodeURIComponent(debouncedQuery)}&limit=8`);
+        const data = await response.json();
+        if (!cancelled) {
+          setResults({ tools: data.tools || [], categories: data.categories || [] });
+          trackSearch(debouncedQuery);
+        }
+      } catch {
+        // Ignore search errors in the modal UI
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
     }
-    setLoading(true);
-    fetch(`/api/search?q=${encodeURIComponent(debouncedQuery)}&limit=8`)
-      .then((r) => r.json())
-      .then((data) => {
-        setResults({ tools: data.tools || [], categories: data.categories || [] });
-        trackSearch(debouncedQuery);
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, [debouncedQuery]);
+
+    runSearch();
+    return () => {
+      cancelled = true;
+    };
+  }, [debouncedQuery, open]);
 
   const allItems = [...results.categories.map(c => ({ ...c, type: 'category' })),
                     ...results.tools.map(t => ({ ...t, type: 'tool' }))];

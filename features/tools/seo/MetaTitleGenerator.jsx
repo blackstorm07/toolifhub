@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { Copy, Check } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { trackToolUsage } from '@/lib/analytics';
@@ -21,14 +21,19 @@ export default function MetaTitleGenerator() {
   const [keyword, setKeyword] = useState('');
   const [brand, setBrand] = useState('');
   const [copiedIdx, setCopiedIdx] = useState(null);
-  const [tracked, setTracked] = useState(false);
+  const trackedRef = useRef(false);
 
   const titles = useMemo(() => {
     const kw = keyword.trim();
     if (!kw) return [];
-    if (!tracked) { trackToolUsage('meta-title-generator', 'Meta Title Generator'); setTracked(true); }
     return TEMPLATES.map((t) => t(kw.replace(/\b\w/g, (c) => c.toUpperCase()), brand.trim() || 'YourBrand'));
-  }, [keyword, brand, tracked]);
+  }, [keyword, brand]);
+
+  useEffect(() => {
+    if (!keyword.trim() || trackedRef.current) return;
+    trackToolUsage('meta-title-generator', 'Meta Title Generator');
+    trackedRef.current = true;
+  }, [keyword]);
 
   const handleCopy = (text, idx) => {
     copyToClipboard(text);

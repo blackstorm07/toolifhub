@@ -19,7 +19,23 @@ export default function AdminCategoriesPage() {
     setLoading(false);
   };
 
-  useEffect(() => { fetchData(); }, []);
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadCategories() {
+      const res = await fetch('/api/admin/categories');
+      const data = await res.json();
+      if (!cancelled) {
+        setCategories(data.categories || []);
+        setLoading(false);
+      }
+    }
+
+    loadCategories();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const openAdd = () => {
     setEditing(null);

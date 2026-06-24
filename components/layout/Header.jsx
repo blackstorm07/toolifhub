@@ -8,6 +8,7 @@ import { useTheme } from 'next-themes';
 import SearchBar from '@/components/search/SearchBar';
 import SearchModal from '@/components/search/SearchModal';
 import Logo from '@/components/brand/Logo';
+import { useIsClient } from '@/hooks/useIsClient';
 
 const navLinks = [
   { label: 'Tools', href: '/categories' },
@@ -17,8 +18,7 @@ const navLinks = [
 
 function ThemeToggle() {
   const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  const mounted = useIsClient();
   if (!mounted) return <div className="w-9 h-9" />;
   return (
     <button
@@ -34,16 +34,22 @@ function ThemeToggle() {
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [searchSession, setSearchSession] = useState(0);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
+
+  const openSearch = () => {
+    setSearchSession((session) => session + 1);
+    setSearchOpen(true);
+  };
+
+  const closeMobileMenu = () => setMobileOpen(false);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
-
-  useEffect(() => setMobileOpen(false), [pathname]);
 
   // Cmd+K global shortcut
   useEffect(() => {
@@ -74,7 +80,7 @@ export default function Header() {
 
           {/* Desktop search */}
           <div className="hidden md:flex flex-1 max-w-md mx-4">
-            <SearchBar size="sm" className="w-full" onOpen={() => setSearchOpen(true)} />
+            <SearchBar size="sm" className="w-full" onOpen={openSearch} />
           </div>
 
           {/* Desktop nav */}
@@ -98,7 +104,7 @@ export default function Header() {
           {/* Mobile */}
           <div className="ml-auto flex items-center gap-2 md:hidden">
             <button
-              onClick={() => setSearchOpen(true)}
+              onClick={openSearch}
               className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-muted"
               aria-label="Search"
             >
@@ -125,6 +131,7 @@ export default function Header() {
                 <Link
                   key={link.href}
                   href={link.href}
+                  onClick={closeMobileMenu}
                   className="px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
                 >
                   {link.label}
@@ -135,7 +142,7 @@ export default function Header() {
         )}
       </header>
 
-      <SearchModal open={searchOpen} onClose={() => setSearchOpen(false)} />
+      <SearchModal key={searchSession} open={searchOpen} onClose={() => setSearchOpen(false)} />
     </>
   );
 }

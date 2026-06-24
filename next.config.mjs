@@ -10,9 +10,6 @@ const nextConfig = {
       { protocol: 'https', hostname: 'images.unsplash.com' },
     ],
   },
-  experimental: {
-    optimizePackageImports: ['lucide-react', 'date-fns'],
-  },
   async headers() {
     return [
       {
