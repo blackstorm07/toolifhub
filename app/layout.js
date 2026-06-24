@@ -16,7 +16,7 @@ const inter = Inter({
   preload: true,
 });
 
-const ADSENSE_CLIENT = process.env.NEXT_PUBLIC_GOOGLE_ADSENSE_CLIENT;
+const ADSENSE_CLIENT = config.ads.adsenseClient;
 const GA_ID = config.analytics.gaId;
 
 export const metadata = buildRootMetadata();
