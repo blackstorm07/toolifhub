@@ -9,6 +9,18 @@ import BlogPreview from '@/components/home/BlogPreview';
 import Newsletter from '@/components/home/Newsletter';
 import HeaderAd from '@/components/ads/HeaderAd';
 import FooterAd from '@/components/ads/FooterAd';
+import JsonLd, { buildOrganizationSchema, buildWebSiteSchema } from '@/components/seo/JsonLd';
+import { buildPageMetadata } from '@/lib/seo/metadata';
+import { SITE_NAME } from '@/lib/seo/constants';
+
+export const metadata = buildPageMetadata({
+  title: `${SITE_NAME} — One Hub. Unlimited Tools.`,
+  description:
+    'Free online tools for YouTube, SEO, developers, AI, productivity and more. 500+ tools — no sign-up required.',
+  path: '/',
+  keywords: ['free online tools', 'youtube tools', 'seo tools', 'developer tools', 'ai tools'],
+  absoluteTitle: true,
+});
 
 async function getData() {
   try {
@@ -37,13 +49,7 @@ async function getData() {
         .lean(),
     ]);
 
-    return {
-      categories: categoriesWithCounts,
-      featuredTools,
-      trendingTools,
-      recentTools,
-      blogs,
-    };
+    return { categories: categoriesWithCounts, featuredTools, trendingTools, recentTools, blogs };
   } catch (e) {
     console.error('Home page data error:', e);
     return { categories: [], featuredTools: [], trendingTools: [], recentTools: [], blogs: [] };
@@ -55,33 +61,19 @@ export default async function HomePage() {
 
   return (
     <>
+      <JsonLd data={[buildOrganizationSchema(), buildWebSiteSchema()]} />
+
       <Hero />
       <HeaderAd />
       <FeaturedCategories categories={categories} />
       {featuredTools.length > 0 && (
-        <ToolsSection
-          title="Featured Tools"
-          badge="Editor's Pick"
-          tools={featuredTools}
-          viewAllHref="/categories"
-        />
+        <ToolsSection title="Featured Tools" badge="Editor's Pick" tools={featuredTools} viewAllHref="/categories" />
       )}
       {trendingTools.length > 0 && (
-        <ToolsSection
-          title="Trending Now"
-          badge="🔥 Hot"
-          subtitle="Most used tools this week"
-          tools={trendingTools}
-          viewAllHref="/categories"
-        />
+        <ToolsSection title="Trending Now" badge="🔥 Hot" subtitle="Most used tools this week" tools={trendingTools} viewAllHref="/categories" />
       )}
       {recentTools.length > 0 && (
-        <ToolsSection
-          title="Recently Added"
-          badge="New"
-          tools={recentTools}
-          viewAllHref="/categories"
-        />
+        <ToolsSection title="Recently Added" badge="New" tools={recentTools} viewAllHref="/categories" />
       )}
       <BlogPreview blogs={blogs} />
       <Newsletter />

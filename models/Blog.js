@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import '@/models/User';
 
 const blogSchema = new mongoose.Schema(
   {

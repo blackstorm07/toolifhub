@@ -14,7 +14,7 @@ export default function Hero() {
       <div className="absolute top-0 -left-40 w-80 h-80 bg-brand-400/20 rounded-full blur-3xl" />
       <div className="absolute top-0 -right-40 w-80 h-80 bg-purple-400/20 rounded-full blur-3xl" />
 
-      <div className="relative container py-10 sm:py-12 lg:py-16 text-center">
+      <div className="relative container py-8 sm:py-10 lg:py-12 text-center">
         {/* Badge */}
         <div className="inline-flex items-center gap-2 px-3.5 py-1 bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 text-xs sm:text-sm font-medium rounded-full border border-brand-200 dark:border-brand-800 mb-4">
           <Zap className="w-3.5 h-3.5" fill="currentColor" />

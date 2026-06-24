@@ -2,9 +2,10 @@
 
 import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Zap, Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { Suspense } from 'react';
+import { LogoIcon } from '@/components/brand/Logo';
 
 function LoginForm() {
   const [form, setForm] = useState({ email: '', password: '' });
@@ -42,8 +43,8 @@ function LoginForm() {
     <div className="min-h-screen flex items-center justify-center px-4 bg-muted/30">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="w-12 h-12 bg-gradient-to-br from-brand-500 to-purple-600 rounded-xl flex items-center justify-center mx-auto mb-4">
-            <Zap className="w-6 h-6 text-white" fill="white" />
+          <div className="mx-auto mb-4 flex items-center justify-center">
+            <LogoIcon size={48} />
           </div>
           <h1 className="text-2xl font-bold">Admin Login</h1>
           <p className="text-muted-foreground text-sm mt-1">Sign in to manage ToolifHub</p>

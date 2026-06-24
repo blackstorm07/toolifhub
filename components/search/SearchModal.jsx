@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { useRouter } from 'next/navigation';
-import { Search, X, ArrowRight, Tag, Zap } from 'lucide-react';
+import { Search, X, ArrowRight, Tag } from 'lucide-react';
 import { trackSearch } from '@/lib/analytics';
 
 function useDebounce(value, delay) {
@@ -20,8 +21,11 @@ export default function SearchModal({ open, onClose }) {
   const [loading, setLoading] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
   const inputRef = useRef(null);
+  const [mounted, setMounted] = useState(false);
   const router = useRouter();
   const debouncedQuery = useDebounce(query, 300);
+
+  useEffect(() => setMounted(true), []);
 
   // Focus input when modal opens
   useEffect(() => {
@@ -32,15 +36,19 @@ export default function SearchModal({ open, onClose }) {
     }
   }, [open]);
 
-  // Cmd+K shortcut
   useEffect(() => {
+    if (!open) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
     const handler = (e) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-        e.preventDefault();
-        if (open) onClose();
-        else onClose(); // toggle handled by parent
-      }
-      if (e.key === 'Escape' && open) onClose();
+      if (e.key === 'Escape') onClose();
     };
     document.addEventListener('keydown', handler);
     return () => document.removeEventListener('keydown', handler);
@@ -87,18 +95,22 @@ export default function SearchModal({ open, onClose }) {
     }
   };
 
-  if (!open) return null;
+  if (!open || !mounted) return null;
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center pt-[15vh] px-4">
-      {/* Backdrop */}
+  return createPortal(
+    <div className="fixed inset-0 z-[100] flex items-start justify-center pt-[15vh] px-4">
       <div
         className="absolute inset-0 bg-black/60 backdrop-blur-sm"
         onClick={onClose}
+        aria-hidden="true"
       />
 
-      {/* Modal */}
-      <div className="relative w-full max-w-2xl bg-background border border-border rounded-2xl shadow-2xl overflow-hidden animate-fade-in">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="Search tools and categories"
+        className="relative w-full max-w-2xl bg-background border border-border rounded-2xl shadow-2xl overflow-hidden"
+      >
         {/* Input */}
         <div className="flex items-center gap-3 px-4 py-4 border-b border-border">
           <Search className="w-5 h-5 text-muted-foreground flex-shrink-0" />
@@ -184,6 +196,7 @@ export default function SearchModal({ open, onClose }) {
           <span className="flex items-center gap-1"><kbd className="font-mono bg-background border border-border rounded px-1">Esc</kbd> Close</span>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

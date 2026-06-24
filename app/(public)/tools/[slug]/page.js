@@ -5,12 +5,20 @@ import Category from '@/models/Category';
 import Breadcrumb from '@/components/tools/Breadcrumb';
 import ToolFAQ from '@/components/tools/ToolFAQ';
 import RelatedTools from '@/components/tools/RelatedTools';
+import ToolSeoContent from '@/components/tools/ToolSeoContent';
+import RelatedBlogs from '@/components/seo/RelatedBlogs';
 import ShareButtons from '@/components/tools/ShareButtons';
 import InContentAd from '@/components/ads/InContentAd';
 import SidebarAd from '@/components/ads/SidebarAd';
-import JsonLd, { buildFaqSchema, buildBreadcrumbSchema, buildWebApplicationSchema } from '@/components/seo/JsonLd';
+import JsonLd, {
+  buildFaqSchema,
+  buildBreadcrumbSchema,
+  buildSoftwareApplicationSchema,
+} from '@/components/seo/JsonLd';
 import ToolRenderer from '@/features/tools/ToolRenderer';
-import { absoluteUrl, generateSeoTitle } from '@/lib/utils';
+import { buildPageMetadata, buildToolTitle, buildCanonical } from '@/lib/seo/metadata';
+import { generateToolSeoContent } from '@/lib/seo/toolContent';
+import { getRelatedBlogsForTool } from '@/lib/seo/internalLinks';
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
@@ -20,26 +28,14 @@ export async function generateMetadata({ params }) {
       .populate('category', 'name')
       .lean();
     if (!tool) return {};
-    const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-    // seoTitle already includes "| ToolifHub" — use `absolute` so the root
-    // layout's title template doesn't append it a second time.
-    return {
-      title: { absolute: tool.seoTitle || generateSeoTitle(tool.title) },
+    const title = tool.seoTitle || buildToolTitle(tool.title);
+    return buildPageMetadata({
+      title,
       description: tool.seoDescription || tool.shortDescription,
+      path: `/tools/${slug}`,
       keywords: tool.seoKeywords?.length ? tool.seoKeywords : tool.keywords,
-      openGraph: {
-        title: tool.title,
-        description: tool.shortDescription,
-        url: `${APP_URL}/tools/${slug}`,
-        type: 'website',
-      },
-      twitter: {
-        card: 'summary',
-        title: tool.title,
-        description: tool.shortDescription,
-      },
-      alternates: { canonical: `${APP_URL}/tools/${slug}` },
-    };
+      absoluteTitle: true,
+    });
   } catch {
     return {};
   }
@@ -52,10 +48,8 @@ async function getData(slug) {
     .lean();
   if (!tool) return null;
 
-  // Increment views
   Tool.findByIdAndUpdate(tool._id, { $inc: { views: 1 } }).exec();
 
-  // Related tools
   let relatedTools = [];
   if (tool.relatedTools?.length) {
     relatedTools = await Tool.find({ slug: { $in: tool.relatedTools }, status: 'active' })
@@ -75,7 +69,8 @@ async function getData(slug) {
       .lean();
   }
 
-  return { tool, relatedTools };
+  const relatedBlogs = await getRelatedBlogsForTool(tool);
+  return { tool, relatedTools, relatedBlogs };
 }
 
 export default async function ToolPage({ params }) {
@@ -83,34 +78,34 @@ export default async function ToolPage({ params }) {
   const data = await getData(slug);
   if (!data) notFound();
 
-  const { tool, relatedTools } = data;
-  const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-  const toolUrl = `${APP_URL}/tools/${slug}`;
+  const { tool, relatedTools, relatedBlogs } = data;
+  const toolUrl = buildCanonical(`/tools/${slug}`);
+  const seoContent = generateToolSeoContent(tool, tool.category?.name);
+  const faqs = tool.faq?.length ? tool.faq : seoContent.faq;
 
-  const faqSchema = tool.faq?.length ? buildFaqSchema(tool.faq) : null;
-  const breadcrumbSchema = buildBreadcrumbSchema(
-    [
-      { label: 'Categories', href: '/categories' },
-      { label: tool.category.name, href: `/category/${tool.category.slug}` },
-      { label: tool.title },
-    ],
-    APP_URL
-  );
-  const webAppSchema = buildWebApplicationSchema({
-    name: tool.title,
-    description: tool.shortDescription,
-    url: toolUrl,
-    category: tool.category.name,
-  });
+  const schemas = [
+    buildBreadcrumbSchema(
+      [
+        { label: 'Categories', href: '/categories' },
+        { label: tool.category.name, href: `/category/${tool.category.slug}` },
+        { label: tool.title, href: `/tools/${slug}` },
+      ]
+    ),
+    buildSoftwareApplicationSchema({
+      name: tool.title,
+      description: tool.shortDescription,
+      url: toolUrl,
+      category: tool.category.name,
+    }),
+  ];
+  const faqSchema = buildFaqSchema(faqs);
+  if (faqSchema) schemas.push(faqSchema);
 
   return (
     <>
-      {faqSchema && <JsonLd data={faqSchema} />}
-      <JsonLd data={breadcrumbSchema} />
-      <JsonLd data={webAppSchema} />
+      <JsonLd data={schemas} />
 
-      <div className="container py-12 lg:py-16">
-        {/* Breadcrumb */}
+      <div className="page">
         <Breadcrumb
           items={[
             { label: 'Categories', href: '/categories' },
@@ -119,10 +114,8 @@ export default async function ToolPage({ params }) {
           ]}
         />
 
-        <div className="mt-8 flex flex-col lg:flex-row gap-8">
-          {/* Main content */}
-          <div className="flex-1 min-w-0 space-y-8">
-            {/* Tool header */}
+        <div className="mt-6 flex flex-col lg:flex-row gap-6">
+          <div className="flex-1 min-w-0 space-y-6">
             <div className="flex items-start gap-4">
               <div className="w-14 h-14 rounded-2xl bg-brand-50 dark:bg-brand-900/30 flex items-center justify-center text-3xl flex-shrink-0">
                 {tool.icon}
@@ -133,32 +126,22 @@ export default async function ToolPage({ params }) {
               </div>
             </div>
 
-            {/* The actual tool interface */}
             <ToolRenderer slug={slug} tool={tool} />
 
             <InContentAd />
 
-            {/* Full description */}
-            {tool.fullDescription && (
-              <section className="prose prose-neutral dark:prose-invert max-w-none">
-                <h2 className="text-2xl font-bold not-prose mb-4">About {tool.title}</h2>
-                <div dangerouslySetInnerHTML={{ __html: tool.fullDescription }} />
-              </section>
-            )}
+            <ToolSeoContent tool={tool} categoryName={tool.category.name} />
 
-            {/* FAQ */}
             {tool.faq?.length > 0 && <ToolFAQ faqs={tool.faq} />}
 
-            {/* Share */}
             <div className="pt-4 border-t border-border">
               <ShareButtons url={toolUrl} title={tool.title} slug={slug} />
             </div>
 
-            {/* Related tools */}
             <RelatedTools tools={relatedTools} />
+            <RelatedBlogs blogs={relatedBlogs} />
           </div>
 
-          {/* Sidebar ad (desktop only) */}
           <aside className="hidden lg:block w-[300px] flex-shrink-0">
             <SidebarAd />
           </aside>

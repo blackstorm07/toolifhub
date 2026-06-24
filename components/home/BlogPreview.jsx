@@ -59,7 +59,7 @@ export default function BlogPreview({ blogs = [] }) {
   return (
     <section className="section bg-muted/30">
       <div className="container">
-        <div className="flex items-end justify-between mb-10">
+        <div className="flex items-end justify-between mb-6">
           <div>
             <p className="text-sm font-semibold text-brand-500 uppercase tracking-wider mb-2">Tips & Tutorials</p>
             <h2 className="text-3xl lg:text-4xl font-bold">From the Blog</h2>
@@ -75,7 +75,7 @@ export default function BlogPreview({ blogs = [] }) {
           ))}
         </div>
 
-        <div className="mt-8 sm:hidden text-center">
+        <div className="mt-6 sm:hidden text-center">
           <Link href="/blog" className="inline-flex items-center gap-2 text-sm font-medium text-brand-500">
             Read all posts <ArrowRight className="w-4 h-4" />
           </Link>

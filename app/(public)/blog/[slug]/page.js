@@ -1,11 +1,19 @@
 import { notFound } from 'next/navigation';
 import connectDB from '@/lib/mongodb';
 import Blog from '@/models/Blog';
-import Breadcrumb from '@/components/tools/Breadcrumb';
-import { getTimeAgo, generateSeoTitle } from '@/lib/utils';
+import RelatedBlogs from '@/components/seo/RelatedBlogs';
+import RelatedTools from '@/components/tools/RelatedTools';
+import OptimizedImage from '@/components/seo/OptimizedImage';
 import InContentAd from '@/components/ads/InContentAd';
-import Link from 'next/link';
-import { ArrowLeft, Calendar } from 'lucide-react';
+import JsonLd, { buildArticleSchema, buildBreadcrumbSchema } from '@/components/seo/JsonLd';
+import { buildPageMetadata, buildCanonical } from '@/lib/seo/metadata';
+import { calculateReadingTime } from '@/lib/seo/readingTime';
+import { getRelatedBlogsForBlog, getRelatedToolsForBlog } from '@/lib/seo/internalLinks';
+import ReadingProgress from '@/components/blog/ReadingProgress';
+import ArticleHero from '@/components/blog/ArticleHero';
+import ArticleWithToc from '@/components/blog/ArticleWithToc';
+import AuthorCard from '@/components/blog/AuthorCard';
+import ArticleNav from '@/components/blog/ArticleNav';
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
@@ -13,13 +21,16 @@ export async function generateMetadata({ params }) {
     await connectDB();
     const blog = await Blog.findOne({ slug, status: 'published' }).lean();
     if (!blog) return {};
-    // seoTitle already includes "| ToolifHub" — use `absolute` so the root
-    // layout's title template doesn't append it a second time.
-    return {
-      title: { absolute: blog.seoTitle || generateSeoTitle(blog.title) },
+    const title = blog.seoTitle || `${blog.title} | ToolifHub`;
+    return buildPageMetadata({
+      title,
       description: blog.seoDescription || blog.excerpt,
-      openGraph: { title: blog.title, description: blog.excerpt, images: blog.featuredImage ? [blog.featuredImage] : [] },
-    };
+      path: `/blog/${slug}`,
+      keywords: blog.tags,
+      ogImage: blog.featuredImage || undefined,
+      ogType: 'article',
+      absoluteTitle: !!blog.seoTitle,
+    });
   } catch {
     return {};
   }
@@ -27,74 +38,127 @@ export async function generateMetadata({ params }) {
 
 async function getData(slug) {
   await connectDB();
-  const blog = await Blog.findOne({ slug, status: 'published' }).lean();
+  const blog = await Blog.findOne({ slug, status: 'published' }).populate('author', 'name avatar').lean();
   if (!blog) return null;
   Blog.findByIdAndUpdate(blog._id, { $inc: { views: 1 } }).exec();
-  const related = await Blog.find({ slug: { $ne: slug }, status: 'published', tags: { $in: blog.tags || [] } })
-    .select('-content').limit(3).lean();
-  return { blog, related };
+
+  const publishedAt = blog.publishedAt || blog.createdAt;
+
+  const [related, relatedTools, prev, next] = await Promise.all([
+    getRelatedBlogsForBlog(blog),
+    getRelatedToolsForBlog(blog),
+    Blog.findOne({ status: 'published', slug: { $ne: blog.slug }, publishedAt: { $lt: publishedAt } })
+      .sort({ publishedAt: -1 })
+      .select('title slug')
+      .lean(),
+    Blog.findOne({ status: 'published', slug: { $ne: blog.slug }, publishedAt: { $gt: publishedAt } })
+      .sort({ publishedAt: 1 })
+      .select('title slug')
+      .lean(),
+  ]);
+
+  return { blog, related, relatedTools, prev, next };
 }
 
 export default async function BlogPostPage({ params }) {
   const { slug } = await params;
   const data = await getData(slug);
   if (!data) notFound();
-  const { blog, related } = data;
+  const { blog, related, relatedTools, prev, next } = data;
+
+  const pageUrl = buildCanonical(`/blog/${slug}`);
+  const authorName = blog.author?.name || 'ToolifHub Team';
+  const publishedAt = blog.publishedAt || blog.createdAt;
+  const readingTime = calculateReadingTime(blog.content);
+
+  const schemas = [
+    buildBreadcrumbSchema([
+      { label: 'Blog', href: '/blog' },
+      { label: blog.title, href: `/blog/${slug}` },
+    ]),
+    buildArticleSchema({
+      title: blog.title,
+      description: blog.excerpt,
+      url: pageUrl,
+      image: blog.featuredImage,
+      datePublished: new Date(publishedAt).toISOString(),
+      dateModified: new Date(blog.updatedAt || publishedAt).toISOString(),
+      authorName,
+    }),
+  ];
 
   return (
-    <div className="container py-12 lg:py-16 max-w-4xl">
-      <Breadcrumb items={[{ label: 'Blog', href: '/blog' }, { label: blog.title }]} />
+    <>
+      <JsonLd data={schemas} />
+      <ReadingProgress />
 
-      <article className="mt-8">
-        <div className="mb-8">
-          <div className="flex flex-wrap gap-2 mb-4">
-            {blog.tags?.map((tag) => (
-              <span key={tag} className="text-xs font-medium text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-900/30 px-3 py-1 rounded-full">
-                {tag}
-              </span>
-            ))}
-          </div>
-          <h1 className="text-3xl lg:text-4xl font-bold mb-4 leading-tight">{blog.title}</h1>
-          <div className="flex items-center gap-4 text-sm text-muted-foreground">
-            <span className="flex items-center gap-1.5">
-              <Calendar className="w-4 h-4" />
-              {getTimeAgo(blog.publishedAt || blog.createdAt)}
-            </span>
-          </div>
-        </div>
+      <ArticleHero
+        blog={blog}
+        authorName={authorName}
+        publishedAt={publishedAt}
+        readingMinutes={readingTime.minutes}
+        pageUrl={pageUrl}
+      />
 
-        {blog.featuredImage && (
-          <div className="aspect-video mb-8 rounded-2xl overflow-hidden bg-muted">
-            <img src={blog.featuredImage} alt={blog.title} className="w-full h-full object-cover" />
-          </div>
-        )}
-
-        <InContentAd />
-
-        <div
-          className="prose prose-neutral dark:prose-invert max-w-none prose-headings:font-bold prose-a:text-brand-500"
-          dangerouslySetInnerHTML={{ __html: blog.content }}
-        />
-      </article>
-
-      {related.length > 0 && (
-        <div className="mt-12 pt-8 border-t border-border">
-          <h2 className="text-2xl font-bold mb-6">Related Articles</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {related.map((r) => (
-              <Link key={r._id} href={`/blog/${r.slug}`} className="group p-4 border border-border rounded-xl hover:border-brand-300 hover:shadow-md transition-all">
-                <h3 className="font-semibold text-sm line-clamp-2 group-hover:text-brand-600 dark:group-hover:text-brand-400">{r.title}</h3>
-              </Link>
-            ))}
+      {blog.featuredImage && (
+        <div className="max-w-[960px] mx-auto px-4 sm:px-6 lg:px-8 -mt-2 lg:-mt-4">
+          <div className="relative aspect-[16/8] sm:aspect-[21/9] rounded-3xl overflow-hidden bg-muted shadow-lg">
+            <OptimizedImage
+              src={blog.featuredImage}
+              alt={blog.title}
+              fill
+              className="object-cover"
+              priority
+              sizes="(max-width: 960px) 100vw, 960px"
+            />
           </div>
         </div>
       )}
 
-      <div className="mt-8">
-        <Link href="/blog" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
-          <ArrowLeft className="w-4 h-4" /> Back to Blog
-        </Link>
+      <div className="max-w-[1100px] mx-auto px-4 sm:px-6 lg:px-8 mt-10 lg:mt-14 pb-20">
+        <article>
+          <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_16rem] gap-12">
+            <div className="max-w-[820px] w-full mx-auto xl:mx-0">
+              <InContentAd />
+            </div>
+            <div className="hidden xl:block" />
+          </div>
+
+          <ArticleWithToc html={blog.content} />
+
+          <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_16rem] gap-12">
+            <div className="max-w-[820px] w-full mx-auto xl:mx-0">
+              {blog.tags?.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-10">
+                  {blog.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="text-xs font-medium text-muted-foreground bg-muted px-3 py-1 rounded-full"
+                    >
+                      #{tag}
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              <div className="mt-10">
+                <AuthorCard name={authorName} avatar={blog.author?.avatar} />
+              </div>
+            </div>
+            <div className="hidden xl:block" />
+          </div>
+        </article>
+
+        <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_16rem] gap-12 mt-12">
+          <div className="max-w-[820px] w-full mx-auto xl:mx-0 space-y-16">
+            {relatedTools.length > 0 && <RelatedTools tools={relatedTools} />}
+            {related.length > 0 && <RelatedBlogs blogs={related} />}
+
+            <ArticleNav prev={prev} next={next} />
+          </div>
+          <div className="hidden xl:block" />
+        </div>
       </div>
-    </div>
+    </>
   );
 }

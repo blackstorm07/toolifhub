@@ -3,10 +3,11 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, X, Moon, Sun, Zap } from 'lucide-react';
+import { Menu, X, Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import SearchBar from '@/components/search/SearchBar';
 import SearchModal from '@/components/search/SearchModal';
+import Logo from '@/components/brand/Logo';
 
 const navLinks = [
   { label: 'Tools', href: '/categories' },
@@ -67,18 +68,13 @@ export default function Header() {
       >
         <div className="container h-16 flex items-center gap-4">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 flex-shrink-0">
-            <div className="w-8 h-8 bg-gradient-to-br from-brand-500 to-purple-600 rounded-lg flex items-center justify-center">
-              <Zap className="w-4 h-4 text-white" fill="white" />
-            </div>
-            <span className="font-bold text-lg tracking-tight">
-              {process.env.NEXT_PUBLIC_APP_NAME || 'ToolifHub'}
-            </span>
+          <Link href="/" className="flex-shrink-0">
+            <Logo size={30} textClassName="text-xl" className="gap-2.5" />
           </Link>
 
           {/* Desktop search */}
           <div className="hidden md:flex flex-1 max-w-md mx-4">
-            <SearchBar size="sm" className="w-full" />
+            <SearchBar size="sm" className="w-full" onOpen={() => setSearchOpen(true)} />
           </div>
 
           {/* Desktop nav */}

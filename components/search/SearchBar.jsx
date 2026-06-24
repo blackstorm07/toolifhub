@@ -4,8 +4,14 @@ import { useState, useCallback } from 'react';
 import { Search } from 'lucide-react';
 import SearchModal from './SearchModal';
 
-export default function SearchBar({ placeholder = 'Search 500+ tools...', size = 'md', className = '' }) {
+export default function SearchBar({
+  placeholder = 'Search 500+ tools...',
+  size = 'md',
+  className = '',
+  onOpen,
+}) {
   const [open, setOpen] = useState(false);
+  const usesExternalModal = typeof onOpen === 'function';
 
   const sizes = {
     sm: 'h-9 text-sm px-3',
@@ -13,10 +19,16 @@ export default function SearchBar({ placeholder = 'Search 500+ tools...', size =
     lg: 'h-14 text-lg px-5',
   };
 
+  const handleOpen = () => {
+    if (usesExternalModal) onOpen();
+    else setOpen(true);
+  };
+
   return (
     <>
       <button
-        onClick={() => setOpen(true)}
+        type="button"
+        onClick={handleOpen}
         className={`flex items-center gap-3 w-full ${sizes[size]} bg-muted/60 hover:bg-muted border border-border rounded-xl text-muted-foreground transition-colors cursor-text ${className}`}
         aria-label="Open search"
       >
@@ -26,7 +38,9 @@ export default function SearchBar({ placeholder = 'Search 500+ tools...', size =
           <kbd>⌘</kbd><kbd>K</kbd>
         </span>
       </button>
-      <SearchModal open={open} onClose={() => setOpen(false)} />
+      {!usesExternalModal && (
+        <SearchModal open={open} onClose={() => setOpen(false)} />
+      )}
     </>
   );
 }

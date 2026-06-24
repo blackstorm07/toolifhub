@@ -1,11 +1,17 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  compress: true,
+  poweredByHeader: false,
   images: {
+    formats: ['image/avif', 'image/webp'],
     remotePatterns: [
       { protocol: 'https', hostname: 'img.youtube.com' },
       { protocol: 'https', hostname: 'i.ytimg.com' },
       { protocol: 'https', hostname: 'images.unsplash.com' },
     ],
+  },
+  experimental: {
+    optimizePackageImports: ['lucide-react', 'date-fns'],
   },
   async headers() {
     return [
@@ -17,6 +23,10 @@ const nextConfig = {
           { key: 'X-XSS-Protection', value: '1; mode=block' },
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
         ],
+      },
+      {
+        source: '/sitemap(.*).xml',
+        headers: [{ key: 'Cache-Control', value: 'public, max-age=3600, s-maxage=3600' }],
       },
     ];
   },

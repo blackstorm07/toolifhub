@@ -15,7 +15,7 @@
  * partnership/endorsement on a ToolifHub blog post.
  */
 
-require('dotenv').config({ path: '.env.local' });
+require('dotenv').config({ path: '.env' });
 const mongoose = require('mongoose');
 
 const MONGODB_URI = process.env.MONGODB_URI;

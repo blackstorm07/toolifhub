@@ -6,7 +6,7 @@ export default function ToolsSection({ title, subtitle, tools = [], viewAllHref,
   return (
     <section className="section">
       <div className="container">
-        <div className="flex items-end justify-between mb-10">
+        <div className="flex items-end justify-between mb-6">
           <div>
             {badge && (
               <p className="text-sm font-semibold text-brand-500 uppercase tracking-wider mb-2">{badge}</p>
@@ -27,7 +27,7 @@ export default function ToolsSection({ title, subtitle, tools = [], viewAllHref,
         <ToolGrid tools={tools} />
 
         {viewAllHref && (
-          <div className="mt-8 sm:hidden text-center">
+          <div className="mt-6 sm:hidden text-center">
             <Link href={viewAllHref} className="inline-flex items-center gap-2 text-sm font-medium text-brand-500">
               View all <ArrowRight className="w-4 h-4" />
             </Link>

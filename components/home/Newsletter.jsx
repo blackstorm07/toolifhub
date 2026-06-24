@@ -27,7 +27,7 @@ export default function Newsletter() {
             <Mail className="w-7 h-7" />
           </div>
           <h2 className="text-3xl lg:text-4xl font-bold mb-4">Stay in the Loop</h2>
-          <p className="text-brand-100 mb-8 text-lg">
+          <p className="text-brand-100 mb-6 text-lg">
             Get notified when we launch new tools, write tutorials, and share tips to boost your productivity.
           </p>
 

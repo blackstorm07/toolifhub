@@ -5,7 +5,7 @@ export default function FeaturedCategories({ categories = [] }) {
   return (
     <section className="section">
       <div className="container">
-        <div className="flex items-end justify-between mb-10">
+        <div className="flex items-end justify-between mb-6">
           <div>
             <p className="text-sm font-semibold text-brand-500 uppercase tracking-wider mb-2">Browse by Category</p>
             <h2 className="text-3xl lg:text-4xl font-bold">Tool Categories</h2>

@@ -9,7 +9,13 @@
       "Read(//tmp/blogimg/**)",
       "Bash(node scripts/add-blog-ai-tools-2026.js)",
       "Bash(curl -s \"http://localhost:3000/tools/word-counter\")",
-      "Bash(curl -s \"http://localhost:3000/blog/10-youtube-seo-tips-to-rank-number-1-in-2024\")"
+      "Bash(curl -s \"http://localhost:3000/blog/10-youtube-seo-tips-to-rank-number-1-in-2024\")",
+      "Bash(file \"/Users/apple/Downloads/favicon_io\"/*.png \"/Users/apple/Downloads/favicon_io\"/*.ico)",
+      "Bash(sips -g pixelWidth -g pixelHeight \"/Users/apple/Downloads/favicon_io/android-chrome-512x512.png\" \"/Users/apple/Downloads/favicon_io/apple-touch-icon.png\")",
+      "Bash(curl -s -o /tmp/blogpage.html -w \"%{http_code}\\\\n\" \"http://localhost:3911/blog/the-ultimate-guide-to-finding-the-best-ai-tools-in-2026\")",
+      "Read(//tmp/**)",
+      "Bash(curl -s -o /tmp/bloglist.html -w \"%{http_code}\\\\n\" \"http://localhost:3911/blog\")",
+      "Bash(pkill -f \"next dev -p 3911\")"
     ]
   }
 }

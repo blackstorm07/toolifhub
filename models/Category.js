@@ -24,6 +24,9 @@ const categorySchema = new mongoose.Schema(
       maxlength: [500, 'Description cannot exceed 500 characters'],
       default: '',
     },
+    seoTitle: { type: String, default: '' },
+    seoDescription: { type: String, default: '' },
+    seoKeywords: { type: [String], default: [] },
     featured: {
       type: Boolean,
       default: false,

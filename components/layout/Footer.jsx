@@ -1,13 +1,22 @@
 import Link from 'next/link';
-import { Zap, Twitter, Github, Mail } from 'lucide-react';
+import { Twitter, Github, Mail } from 'lucide-react';
 import connectDB from '@/lib/mongodb';
 import { getVisibleCategoriesWithCounts } from '@/lib/categories';
+import Logo from '@/components/brand/Logo';
 
 const COMPANY_LINKS = [
   { label: 'About Us', href: '/about' },
   { label: 'Blog', href: '/blog' },
   { label: 'Contact', href: '/contact' },
   { label: 'All Categories', href: '/categories' },
+];
+
+const GUIDE_LINKS = [
+  { label: 'Best AI Tools', href: '/best-ai-tools' },
+  { label: 'Best SEO Tools', href: '/best-seo-tools' },
+  { label: 'Best Developer Tools', href: '/best-developer-tools' },
+  { label: 'Best YouTube Tools', href: '/best-youtube-tools' },
+  { label: 'Best Productivity Tools', href: '/best-productivity-tools' },
 ];
 
 const LEGAL_LINKS = [
@@ -31,34 +40,32 @@ export default async function Footer() {
 
   const footerLinks = {
     ...(toolLinks.length > 0 ? { Tools: toolLinks } : {}),
+    // Guides: GUIDE_LINKS,
     Company: COMPANY_LINKS,
     Legal: LEGAL_LINKS,
   };
 
   return (
     <footer className="border-t border-border bg-muted/30">
-      <div className="container py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12">
+      <div className="container py-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
           {/* Brand */}
           <div className="lg:col-span-2">
-            <Link href="/" className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 bg-gradient-to-br from-brand-500 to-purple-600 rounded-lg flex items-center justify-center">
-                <Zap className="w-4 h-4 text-white" fill="white" />
-              </div>
-              <span className="font-bold text-lg">{appName}</span>
+            <Link href="/" className="mb-4 inline-flex">
+              <Logo size={32} textClassName="text-lg" />
             </Link>
             <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">
               One Hub. Unlimited Tools. Free online tools for developers, creators, and productivity — all in one place.
             </p>
             <div className="flex items-center gap-3 mt-6">
-              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer"
+              {/* <a href="https://twitter.com" target="_blank" rel="noopener noreferrer"
                 className="w-9 h-9 flex items-center justify-center rounded-lg border border-border hover:bg-muted transition-colors">
                 <Twitter className="w-4 h-4" />
               </a>
               <a href="https://github.com" target="_blank" rel="noopener noreferrer"
                 className="w-9 h-9 flex items-center justify-center rounded-lg border border-border hover:bg-muted transition-colors">
                 <Github className="w-4 h-4" />
-              </a>
+              </a> */}
               <Link href="/contact"
                 className="w-9 h-9 flex items-center justify-center rounded-lg border border-border hover:bg-muted transition-colors">
                 <Mail className="w-4 h-4" />
@@ -90,7 +97,6 @@ export default async function Footer() {
       <div className="border-t border-border">
         <div className="container py-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
           <p>© {new Date().getFullYear()} {appName}. All rights reserved.</p>
-          <p>Built with ❤️ for developers and creators worldwide.</p>
         </div>
       </div>
     </footer>

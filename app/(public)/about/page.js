@@ -1,9 +1,12 @@
-import { Zap, Shield, Globe, Zap as Speed } from 'lucide-react';
+import { buildPageMetadata } from '@/lib/seo/metadata';
+import JsonLd, { buildOrganizationSchema } from '@/components/seo/JsonLd';
 
-export const metadata = {
+export const metadata = buildPageMetadata({
   title: 'About ToolifHub — One Hub. Unlimited Tools.',
   description: 'Learn about ToolifHub — the free online tools platform built for developers, creators, and productivity enthusiasts.',
-};
+  path: '/about',
+  keywords: ['about toolifhub', 'free tools platform', 'online tools'],
+});
 
 const values = [
   { icon: '🆓', title: 'Always Free', desc: 'Every tool on ToolifHub is free to use, forever. No hidden fees, no premium tiers.' },
@@ -15,8 +18,10 @@ const values = [
 export default function AboutPage() {
   const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME || 'ToolifHub';
   return (
-    <div className="container py-12 lg:py-16 max-w-4xl">
-      <div className="text-center mb-16">
+    <>
+      <JsonLd data={buildOrganizationSchema()} />
+      <div className="page max-w-7xl">
+      <div className="text-center mb-10">
         <p className="text-sm font-semibold text-brand-500 uppercase tracking-wider mb-4">About Us</p>
         <h1 className="text-4xl lg:text-5xl font-extrabold mb-6">
           We built <span className="gradient-text">{APP_NAME}</span> so you don&apos;t have to jump between 50 tabs.
@@ -26,7 +31,7 @@ export default function AboutPage() {
         </p>
       </div>
 
-      <div className="prose prose-neutral dark:prose-invert max-w-none mb-16">
+      <div className="prose prose-neutral dark:prose-invert max-w-none mb-10">
         <h2>Our Mission</h2>
         <p>
           {APP_NAME} is a free, premium-quality online tools platform. Our goal is simple: give everyone access to the tools they need — fast, private, and beautifully designed — without the clutter.
@@ -40,7 +45,7 @@ export default function AboutPage() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-16">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-10">
         {values.map((v) => (
           <div key={v.title} className="flex gap-4 p-6 rounded-2xl border border-border bg-card">
             <div className="text-3xl flex-shrink-0">{v.icon}</div>
@@ -60,5 +65,6 @@ export default function AboutPage() {
         </a>
       </div>
     </div>
+    </>
   );
 }

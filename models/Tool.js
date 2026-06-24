@@ -70,6 +70,16 @@ const toolSchema = new mongoose.Schema(
     seoTitle: { type: String, default: '' },
     seoDescription: { type: String, default: '' },
     seoKeywords: { type: [String], default: [] },
+    seoContent: {
+      type: {
+        overview: String,
+        features: [String],
+        benefits: [String],
+        howToUse: [String],
+        useCases: [{ title: String, description: String }],
+      },
+      default: null,
+    },
     // Stats
     views: {
       type: Number,
