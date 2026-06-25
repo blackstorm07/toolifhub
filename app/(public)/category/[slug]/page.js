@@ -1,12 +1,15 @@
 import { notFound } from 'next/navigation';
 import connectDB from '@/lib/mongodb';
 import Tool from '@/models/Tool';
-import { getPublicCategoryWithCount, getVisibleCategorySlugs } from '@/lib/categories';
+import { getCategoryVisibilityStatus, getVisibleCategorySlugs } from '@/lib/categories';
 import { getCategorySeoContent } from '@/lib/seo/categoryContent';
+import { getRequestCountry } from '@/lib/geo';
+import { visibilityMongoFilter } from '@/lib/visibility';
 import ToolGrid from '@/components/tools/ToolGrid';
 import Breadcrumb from '@/components/tools/Breadcrumb';
 import CategorySeoContent from '@/components/category/CategorySeoContent';
 import InContentAd from '@/components/ads/InContentAd';
+import VisibilityFilterTracker from '@/components/tools/VisibilityFilterTracker';
 import JsonLd, { buildBreadcrumbSchema, buildCollectionPageSchema, buildFaqSchema } from '@/components/seo/JsonLd';
 import { buildPageMetadata, buildCanonical } from '@/lib/seo/metadata';
 
@@ -14,8 +17,10 @@ export async function generateMetadata({ params }) {
   const { slug } = await params;
   try {
     await connectDB();
-    const category = await getPublicCategoryWithCount(slug);
-    if (!category) return {};
+    const country = await getRequestCountry();
+    const status = await getCategoryVisibilityStatus(slug, country);
+    if (status.status !== 'ok') return {};
+    const category = status.category;
     const seoContent = getCategorySeoContent(slug);
     return buildPageMetadata({
       title: seoContent?.seoTitle || `${category.name} — Free Online Tools`,
@@ -39,20 +44,43 @@ export async function generateStaticParams() {
   }
 }
 
-async function getData(slug) {
+async function getData(slug, country) {
   await connectDB();
-  const category = await getPublicCategoryWithCount(slug);
-  if (!category) return null;
-  const tools = await Tool.find({ category: category._id, status: 'active' })
+  const status = await getCategoryVisibilityStatus(slug, country);
+  if (status.status !== 'ok') return { status: status.status, category: status.category || null };
+
+  const category = status.category;
+  const tools = await Tool.find({ category: category._id, status: 'active', ...visibilityMongoFilter(country) })
     .sort({ featured: -1, views: -1 })
     .lean();
-  return { category, tools };
+  return { status: 'ok', category, tools };
 }
 
 export default async function CategoryPage({ params }) {
   const { slug } = await params;
-  const data = await getData(slug);
-  if (!data) notFound();
+  const country = await getRequestCountry();
+  const data = await getData(slug, country);
+
+  if (data.status === 'not-found') notFound();
+
+  if (data.status === 'geo-blocked') {
+    return (
+      <div className="page">
+        <Breadcrumb items={[{ label: 'Categories', href: '/categories' }, { label: data.category.name }]} />
+        <div className="mt-10 text-center max-w-md mx-auto py-12">
+          <div className="text-5xl mb-4">{data.category.icon}</div>
+          <h1 className="text-2xl font-bold mb-2">{data.category.name} isn&apos;t available in your region</h1>
+          <p className="text-muted-foreground">This category is only available to visitors in India.</p>
+        </div>
+        <VisibilityFilterTracker
+          type="category"
+          category={data.category.slug}
+          visibility={data.category.visibility}
+          country={country}
+        />
+      </div>
+    );
+  }
 
   const { category, tools } = data;
   const seoContent = getCategorySeoContent(slug);

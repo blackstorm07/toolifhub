@@ -58,6 +58,11 @@ const toolSchema = new mongoose.Schema(
       enum: ['active', 'inactive', 'coming-soon'],
       default: 'active',
     },
+    visibility: {
+      type: String,
+      enum: ['worldwide', 'india_only'],
+      default: 'worldwide',
+    },
     faq: {
       type: [faqSchema],
       default: [],

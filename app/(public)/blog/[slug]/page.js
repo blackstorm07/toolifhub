@@ -9,6 +9,7 @@ import JsonLd, { buildArticleSchema, buildBreadcrumbSchema } from '@/components/
 import { buildPageMetadata, buildCanonical } from '@/lib/seo/metadata';
 import { calculateReadingTime } from '@/lib/seo/readingTime';
 import { getRelatedBlogsForBlog, getRelatedToolsForBlog } from '@/lib/seo/internalLinks';
+import { getRequestCountry } from '@/lib/geo';
 import ReadingProgress from '@/components/blog/ReadingProgress';
 import ArticleHero from '@/components/blog/ArticleHero';
 import ArticleWithToc from '@/components/blog/ArticleWithToc';
@@ -36,7 +37,7 @@ export async function generateMetadata({ params }) {
   }
 }
 
-async function getData(slug) {
+async function getData(slug, country) {
   await connectDB();
   const blog = await Blog.findOne({ slug, status: 'published' }).populate('author', 'name avatar').lean();
   if (!blog) return null;
@@ -46,7 +47,7 @@ async function getData(slug) {
 
   const [related, relatedTools, prev, next] = await Promise.all([
     getRelatedBlogsForBlog(blog),
-    getRelatedToolsForBlog(blog),
+    getRelatedToolsForBlog(blog, 6, country),
     Blog.findOne({ status: 'published', slug: { $ne: blog.slug }, publishedAt: { $lt: publishedAt } })
       .sort({ publishedAt: -1 })
       .select('title slug')
@@ -62,7 +63,8 @@ async function getData(slug) {
 
 export default async function BlogPostPage({ params }) {
   const { slug } = await params;
-  const data = await getData(slug);
+  const country = await getRequestCountry();
+  const data = await getData(slug, country);
   if (!data) notFound();
   const { blog, related, relatedTools, prev, next } = data;
 

@@ -15,12 +15,23 @@ const toolRegistry = {
   'json-formatter':    dynamic(() => import('./developer/JsonFormatter')),
   'base64-encoder':    dynamic(() => import('./developer/Base64Tool')),
   'base64-decoder':    dynamic(() => import('./developer/Base64Tool')),
+  'base64-encoder-decoder': dynamic(() => import('./developer/Base64Tool')),
   'uuid-generator':    dynamic(() => import('./developer/UUIDGenerator')),
   'hash-generator':    dynamic(() => import('./developer/HashGenerator')),
   'html-formatter':    dynamic(() => import('./developer/HtmlFormatter')),
   'json-validator':    dynamic(() => import('./developer/JsonFormatter')),
   'css-minifier':      dynamic(() => import('./developer/CssMinifier')),
-  'javascript-minifier': dynamic(() => import('./developer/JsMinifier')),
+  'js-minifier':       dynamic(() => import('./developer/JsMinifier')),
+  'timestamp-converter':   dynamic(() => import('./developer/TimestampConverter')),
+  'jwt-decoder':           dynamic(() => import('./developer/JWTDecoder')),
+  'regex-tester':          dynamic(() => import('./developer/RegexTester')),
+  'json-to-csv-converter': dynamic(() => import('./developer/JsonToCsvConverter')),
+
+  // Security Tools
+  'password-generator':    dynamic(() => import('./security/PasswordGenerator')),
+
+  // Utility Tools
+  'qr-code-generator':     dynamic(() => import('./utility/QRCodeGenerator')),
 
   // Text Tools
   'word-counter':              dynamic(() => import('./text/WordCounter')),
@@ -55,7 +66,20 @@ const toolRegistry = {
   'emi-calculator':        dynamic(() => import('./calculators/EMICalculator')),
   'gst-calculator':        dynamic(() => import('./calculators/GSTCalculator')),
   'discount-calculator':   dynamic(() => import('./calculators/DiscountCalculator')),
+
+  // Government Tools
+  'gstin-validator':      dynamic(() => import('./government/GSTINValidator')),
+  'pin-code-lookup':      dynamic(() => import('./government/PincodeLookup')),
+  'post-office-finder':   dynamic(() => import('./government/PostOfficeFinder')),
+  'ifsc-code-finder':     dynamic(() => import('./government/IFSCFinder')),
+  'mandi-price-checker':  dynamic(() => import('./government/MandiPriceChecker')),
 };
+
+// Tools that render their own card chrome and manage popovers/overflow
+// internally (e.g. dropdown menus that must not be clipped) skip the shared
+// browser-style wrapper below, which applies `overflow-hidden` and would
+// otherwise clip those popovers.
+const NO_CHROME_TOOLS = new Set(['mandi-price-checker']);
 
 function ComingSoon({ tool }) {
   return (
@@ -74,6 +98,10 @@ export default function ToolRenderer({ slug, tool }) {
 
   if (!ToolComponent) {
     return <ComingSoon tool={tool} />;
+  }
+
+  if (NO_CHROME_TOOLS.has(slug)) {
+    return <ToolComponent tool={tool} />;
   }
 
   return (

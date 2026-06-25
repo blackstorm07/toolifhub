@@ -18,7 +18,7 @@ export default function Hero() {
         {/* Badge */}
         <div className="inline-flex items-center gap-2 px-3.5 py-1 bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 text-xs sm:text-sm font-medium rounded-full border border-brand-200 dark:border-brand-800 mb-4">
           <Zap className="w-3.5 h-3.5" fill="currentColor" />
-          500+ Free Online Tools
+          50+ Free Online Tools
         </div>
 
         {/* Headline */}
@@ -52,7 +52,7 @@ export default function Hero() {
 
         {/* Search */}
         <div className="max-w-2xl mx-auto mb-5">
-          <SearchBar size="lg" placeholder="Search 500+ tools — JSON Formatter, Tag Generator, Word Counter..." />
+          <SearchBar size="lg" placeholder="Search 50+ tools — JSON Formatter, Tag Generator, Word Counter..." />
         </div>
 
         {/* Highlights */}

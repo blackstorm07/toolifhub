@@ -1,7 +1,6 @@
 import { notFound } from 'next/navigation';
 import connectDB from '@/lib/mongodb';
 import Tool from '@/models/Tool';
-import Category from '@/models/Category';
 import Breadcrumb from '@/components/tools/Breadcrumb';
 import ToolFAQ from '@/components/tools/ToolFAQ';
 import RelatedTools from '@/components/tools/RelatedTools';
@@ -10,6 +9,7 @@ import RelatedBlogs from '@/components/seo/RelatedBlogs';
 import ShareButtons from '@/components/tools/ShareButtons';
 import InContentAd from '@/components/ads/InContentAd';
 import SidebarAd from '@/components/ads/SidebarAd';
+import VisibilityFilterTracker from '@/components/tools/VisibilityFilterTracker';
 import JsonLd, {
   buildFaqSchema,
   buildBreadcrumbSchema,
@@ -19,15 +19,18 @@ import ToolRenderer from '@/features/tools/ToolRenderer';
 import { buildPageMetadata, buildToolTitle, buildCanonical } from '@/lib/seo/metadata';
 import { generateToolSeoContent } from '@/lib/seo/toolContent';
 import { getRelatedBlogsForTool } from '@/lib/seo/internalLinks';
+import { getRequestCountry } from '@/lib/geo';
+import { canViewTool, visibilityMongoFilter } from '@/lib/visibility';
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
   try {
     await connectDB();
+    const country = await getRequestCountry();
     const tool = await Tool.findOne({ slug, status: 'active' })
-      .populate('category', 'name')
+      .populate('category', 'name visibility')
       .lean();
-    if (!tool) return {};
+    if (!tool || !canViewTool(tool, tool.category, country)) return {};
     const title = tool.seoTitle || buildToolTitle(tool.title);
     return buildPageMetadata({
       title,
@@ -41,20 +44,25 @@ export async function generateMetadata({ params }) {
   }
 }
 
-async function getData(slug) {
+async function getData(slug, country) {
   await connectDB();
   const tool = await Tool.findOne({ slug, status: 'active' })
-    .populate('category', 'name slug icon')
+    .populate('category', 'name slug icon visibility')
     .lean();
-  if (!tool) return null;
+  if (!tool) return { status: 'not-found' };
+
+  if (!canViewTool(tool, tool.category, country)) {
+    return { status: 'geo-blocked', tool };
+  }
 
   Tool.findByIdAndUpdate(tool._id, { $inc: { views: 1 } }).exec();
 
+  const countryFilter = visibilityMongoFilter(country);
   let relatedTools = [];
   if (tool.relatedTools?.length) {
-    relatedTools = await Tool.find({ slug: { $in: tool.relatedTools }, status: 'active' })
+    relatedTools = await Tool.find({ slug: { $in: tool.relatedTools }, status: 'active', ...countryFilter })
       .select('title slug icon shortDescription category')
-      .populate('category', 'name slug')
+      .populate('category', 'name slug visibility')
       .limit(6)
       .lean();
   } else {
@@ -62,21 +70,47 @@ async function getData(slug) {
       category: tool.category._id,
       slug: { $ne: slug },
       status: 'active',
+      ...countryFilter,
     })
       .select('title slug icon shortDescription category')
-      .populate('category', 'name slug')
+      .populate('category', 'name slug visibility')
       .limit(6)
       .lean();
   }
+  // Belt-and-suspenders: relatedTools can reference a different category than
+  // the current tool, so re-check category-level visibility in JS too.
+  relatedTools = relatedTools.filter((t) => canViewTool(t, t.category, country));
 
   const relatedBlogs = await getRelatedBlogsForTool(tool);
-  return { tool, relatedTools, relatedBlogs };
+  return { status: 'ok', tool, relatedTools, relatedBlogs };
 }
 
 export default async function ToolPage({ params }) {
   const { slug } = await params;
-  const data = await getData(slug);
-  if (!data) notFound();
+  const country = await getRequestCountry();
+  const data = await getData(slug, country);
+
+  if (data.status === 'not-found') notFound();
+
+  if (data.status === 'geo-blocked') {
+    return (
+      <div className="page">
+        <Breadcrumb items={[{ label: 'Categories', href: '/categories' }, { label: data.tool.title }]} />
+        <div className="mt-10 text-center max-w-md mx-auto py-12">
+          <div className="text-5xl mb-4">{data.tool.icon}</div>
+          <h1 className="text-2xl font-bold mb-2">{data.tool.title} isn&apos;t available in your region</h1>
+          <p className="text-muted-foreground">This tool is only available to visitors in India.</p>
+        </div>
+        <VisibilityFilterTracker
+          type="tool"
+          category={data.tool.category?.slug}
+          tool={data.tool.slug}
+          visibility={data.tool.visibility}
+          country={country}
+        />
+      </div>
+    );
+  }
 
   const { tool, relatedTools, relatedBlogs } = data;
   const toolUrl = buildCanonical(`/tools/${slug}`);

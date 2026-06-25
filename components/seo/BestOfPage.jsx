@@ -9,12 +9,14 @@ import CategorySeoContent from '@/components/category/CategorySeoContent';
 import InContentAd from '@/components/ads/InContentAd';
 import JsonLd, { buildBreadcrumbSchema, buildCollectionPageSchema, buildFaqSchema } from '@/components/seo/JsonLd';
 import { buildPageMetadata, buildCanonical } from '@/lib/seo/metadata';
+import { getRequestCountry } from '@/lib/geo';
+import { canViewCategory, visibilityMongoFilter } from '@/lib/visibility';
 
-async function getLandingData(categorySlug) {
+async function getLandingData(categorySlug, country) {
   await connectDB();
   const category = await Category.findOne({ slug: categorySlug, visible: true }).lean();
-  if (!category) return null;
-  const tools = await Tool.find({ category: category._id, status: 'active' })
+  if (!category || !canViewCategory(category, country)) return null;
+  const tools = await Tool.find({ category: category._id, status: 'active', ...visibilityMongoFilter(country) })
     .sort({ featured: -1, views: -1 })
     .lean();
   if (!tools.length) return null;
@@ -39,7 +41,8 @@ export default async function BestOfPage({ routeSlug }) {
   const categorySlug = BEST_OF_ROUTES[routeSlug];
   if (!categorySlug) notFound();
 
-  const data = await getLandingData(categorySlug);
+  const country = await getRequestCountry();
+  const data = await getLandingData(categorySlug, country);
   if (!data) notFound();
 
   const { category, tools } = data;

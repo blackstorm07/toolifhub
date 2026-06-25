@@ -5,7 +5,7 @@ import { Search } from 'lucide-react';
 import SearchModal from './SearchModal';
 
 export default function SearchBar({
-  placeholder = 'Search 500+ tools...',
+  placeholder = 'Search 50+ tools...',
   size = 'md',
   className = '',
   onOpen,

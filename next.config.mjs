@@ -5,9 +5,13 @@ const nextConfig = {
   images: {
     formats: ['image/avif', 'image/webp'],
     remotePatterns: [
-      { protocol: 'https', hostname: 'img.youtube.com' },
-      { protocol: 'https', hostname: 'i.ytimg.com' },
-      { protocol: 'https', hostname: 'images.unsplash.com' },
+      // Admin-entered Featured Image URLs can point to any external host
+      // (CDN, Cloudinary, S3, a customer's own site, etc.) — a finite
+      // allowlist can't keep up, so allow any https/http remote source
+      // through Next's image optimizer rather than silently blocking
+      // unlisted domains.
+      { protocol: 'https', hostname: '**' },
+      { protocol: 'http', hostname: '**' },
     ],
   },
   async headers() {

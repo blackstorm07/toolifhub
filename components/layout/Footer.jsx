@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { Twitter, Github, Mail } from 'lucide-react';
 import connectDB from '@/lib/mongodb';
 import { getVisibleCategoriesWithCounts } from '@/lib/categories';
+import { getRequestCountry } from '@/lib/geo';
 import Logo from '@/components/brand/Logo';
 
 const COMPANY_LINKS = [
@@ -27,7 +28,8 @@ const LEGAL_LINKS = [
 async function getFooterCategories() {
   try {
     await connectDB();
-    const categories = await getVisibleCategoriesWithCounts({ limit: 5 });
+    const country = await getRequestCountry();
+    const categories = await getVisibleCategoriesWithCounts({ limit: 5, country });
     return categories.map((c) => ({ label: c.name, href: `/category/${c.slug}` }));
   } catch {
     return [];

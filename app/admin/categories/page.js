@@ -3,13 +3,14 @@
 import { useEffect, useState } from 'react';
 import { Plus, Pencil, Trash2 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { VISIBILITY_OPTIONS, DEFAULT_VISIBILITY } from '@/lib/visibility';
 
 export default function AdminCategoriesPage() {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editing, setEditing] = useState(null);
-  const [form, setForm] = useState({ name: '', slug: '', icon: '📁', description: '', featured: false, order: 0, visible: true });
+  const [form, setForm] = useState({ name: '', slug: '', icon: '📁', description: '', featured: false, order: 0, visible: true, visibility: DEFAULT_VISIBILITY });
 
   const fetchData = async () => {
     setLoading(true);
@@ -39,13 +40,13 @@ export default function AdminCategoriesPage() {
 
   const openAdd = () => {
     setEditing(null);
-    setForm({ name: '', slug: '', icon: '📁', description: '', featured: false, order: 0, visible: true });
+    setForm({ name: '', slug: '', icon: '📁', description: '', featured: false, order: 0, visible: true, visibility: DEFAULT_VISIBILITY });
     setShowModal(true);
   };
 
   const openEdit = (cat) => {
     setEditing(cat);
-    setForm({ name: cat.name, slug: cat.slug, icon: cat.icon, description: cat.description || '', featured: cat.featured, order: cat.order || 0, visible: cat.visible !== false });
+    setForm({ name: cat.name, slug: cat.slug, icon: cat.icon, description: cat.description || '', featured: cat.featured, order: cat.order || 0, visible: cat.visible !== false, visibility: cat.visibility || DEFAULT_VISIBILITY });
     setShowModal(true);
   };
 
@@ -86,6 +87,7 @@ export default function AdminCategoriesPage() {
                 <th className="text-left px-4 py-3 font-semibold text-muted-foreground hidden md:table-cell">Slug</th>
                 <th className="text-left px-4 py-3 font-semibold text-muted-foreground hidden md:table-cell">Featured</th>
                 <th className="text-left px-4 py-3 font-semibold text-muted-foreground hidden md:table-cell">Visible</th>
+                <th className="text-left px-4 py-3 font-semibold text-muted-foreground hidden md:table-cell">Region</th>
                 <th className="text-right px-4 py-3 font-semibold text-muted-foreground">Actions</th>
               </tr>
             </thead>
@@ -100,6 +102,13 @@ export default function AdminCategoriesPage() {
                       <span className="text-xs bg-green-50 text-green-700 dark:bg-green-900/20 dark:text-green-400 px-2 py-1 rounded-full">Visible</span>
                     ) : (
                       <span className="text-xs bg-muted text-muted-foreground px-2 py-1 rounded-full">Hidden</span>
+                    )}
+                  </td>
+                  <td className="px-4 py-3 hidden md:table-cell">
+                    {cat.visibility === 'india_only' ? (
+                      <span className="text-xs bg-orange-50 text-orange-700 dark:bg-orange-900/20 dark:text-orange-400 px-2 py-1 rounded-full">🇮🇳 India Only</span>
+                    ) : (
+                      <span className="text-xs bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400 px-2 py-1 rounded-full">🌍 Worldwide</span>
                     )}
                   </td>
                   <td className="px-4 py-3 text-right">
@@ -153,6 +162,31 @@ export default function AdminCategoriesPage() {
                 <input type="checkbox" checked={form.visible} onChange={e => setForm(f => ({ ...f, visible: e.target.checked }))} className="w-4 h-4 rounded" />
                 Visible on the site (uncheck to hide this category everywhere for users)
               </label>
+
+              <div>
+                <label className="block text-sm font-medium mb-1.5">Visibility *</label>
+                <div className="flex gap-4">
+                  {VISIBILITY_OPTIONS.map((opt) => (
+                    <label key={opt.value} className="flex items-center gap-2 text-sm cursor-pointer">
+                      <input
+                        type="radio"
+                        name="category-visibility"
+                        value={opt.value}
+                        checked={form.visibility === opt.value}
+                        onChange={() => setForm(f => ({ ...f, visibility: opt.value }))}
+                        className="w-4 h-4"
+                      />
+                      {opt.label}
+                    </label>
+                  ))}
+                </div>
+                <p className="text-xs text-muted-foreground mt-1.5">
+                  {(() => {
+                    const opt = VISIBILITY_OPTIONS.find((o) => o.value === form.visibility);
+                    return opt?.helpCategory || opt?.help;
+                  })()}
+                </p>
+              </div>
             </div>
             <div className="p-6 border-t border-border flex gap-3 justify-end">
               <button onClick={() => setShowModal(false)} className="px-4 py-2 rounded-xl border border-border hover:bg-muted text-sm font-medium">Cancel</button>

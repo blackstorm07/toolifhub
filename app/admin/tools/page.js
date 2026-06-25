@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Plus, Pencil, Trash2, Search, Eye, CheckCircle, XCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { VISIBILITY_OPTIONS, DEFAULT_VISIBILITY } from '@/lib/visibility';
 
 export default function AdminToolsPage() {
   const [tools, setTools] = useState([]);
@@ -11,7 +12,7 @@ export default function AdminToolsPage() {
   const [search, setSearch] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [editing, setEditing] = useState(null);
-  const [form, setForm] = useState({ title: '', slug: '', category: '', shortDescription: '', icon: '🔧', status: 'active', featured: false, trending: false, keywords: '', seoTitle: '', seoDescription: '' });
+  const [form, setForm] = useState({ title: '', slug: '', category: '', shortDescription: '', icon: '🔧', status: 'active', featured: false, trending: false, keywords: '', seoTitle: '', seoDescription: '', visibility: DEFAULT_VISIBILITY });
 
   const fetchData = async () => {
     setLoading(true);
@@ -56,7 +57,7 @@ export default function AdminToolsPage() {
 
   const openAdd = () => {
     setEditing(null);
-    setForm({ title: '', slug: '', category: categories[0]?._id || '', shortDescription: '', icon: '🔧', status: 'active', featured: false, trending: false, keywords: '', seoTitle: '', seoDescription: '' });
+    setForm({ title: '', slug: '', category: categories[0]?._id || '', shortDescription: '', icon: '🔧', status: 'active', featured: false, trending: false, keywords: '', seoTitle: '', seoDescription: '', visibility: DEFAULT_VISIBILITY });
     setShowModal(true);
   };
 
@@ -68,6 +69,7 @@ export default function AdminToolsPage() {
       featured: tool.featured, trending: tool.trending,
       keywords: Array.isArray(tool.keywords) ? tool.keywords.join(', ') : tool.keywords || '',
       seoTitle: tool.seoTitle || '', seoDescription: tool.seoDescription || '',
+      visibility: tool.visibility || DEFAULT_VISIBILITY,
     });
     setShowModal(true);
   };
@@ -126,6 +128,7 @@ export default function AdminToolsPage() {
                 <th className="text-left px-4 py-3 font-semibold text-muted-foreground hidden md:table-cell">Category</th>
                 <th className="text-left px-4 py-3 font-semibold text-muted-foreground hidden lg:table-cell">Status</th>
                 <th className="text-left px-4 py-3 font-semibold text-muted-foreground hidden lg:table-cell">Views</th>
+                <th className="text-left px-4 py-3 font-semibold text-muted-foreground hidden lg:table-cell">Region</th>
                 <th className="text-right px-4 py-3 font-semibold text-muted-foreground">Actions</th>
               </tr>
             </thead>
@@ -153,6 +156,13 @@ export default function AdminToolsPage() {
                   </td>
                   <td className="px-4 py-3 hidden lg:table-cell text-muted-foreground">
                     <span className="flex items-center gap-1"><Eye className="w-3 h-3" />{tool.views?.toLocaleString()}</span>
+                  </td>
+                  <td className="px-4 py-3 hidden lg:table-cell">
+                    {tool.visibility === 'india_only' ? (
+                      <span className="text-xs bg-orange-50 text-orange-700 dark:bg-orange-900/20 dark:text-orange-400 px-2 py-1 rounded-full">🇮🇳 India Only</span>
+                    ) : (
+                      <span className="text-xs bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400 px-2 py-1 rounded-full">🌍 Worldwide</span>
+                    )}
                   </td>
                   <td className="px-4 py-3 text-right">
                     <div className="flex items-center justify-end gap-2">
@@ -240,6 +250,31 @@ export default function AdminToolsPage() {
                   <input type="checkbox" checked={form.trending} onChange={e => setForm(f => ({ ...f, trending: e.target.checked }))} className="w-4 h-4 rounded" />
                   Trending
                 </label>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1.5">Visibility *</label>
+                <div className="flex gap-4">
+                  {VISIBILITY_OPTIONS.map((opt) => (
+                    <label key={opt.value} className="flex items-center gap-2 text-sm cursor-pointer">
+                      <input
+                        type="radio"
+                        name="tool-visibility"
+                        value={opt.value}
+                        checked={form.visibility === opt.value}
+                        onChange={() => setForm(f => ({ ...f, visibility: opt.value }))}
+                        className="w-4 h-4"
+                      />
+                      {opt.label}
+                    </label>
+                  ))}
+                </div>
+                <p className="text-xs text-muted-foreground mt-1.5">
+                  {(() => {
+                    const opt = VISIBILITY_OPTIONS.find((o) => o.value === form.visibility);
+                    return opt?.helpTool || opt?.help;
+                  })()}
+                </p>
               </div>
             </div>
             <div className="p-6 border-t border-border flex gap-3 justify-end">

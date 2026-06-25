@@ -2,6 +2,8 @@ import connectDB from '@/lib/mongodb';
 import Tool from '@/models/Tool';
 import Blog from '@/models/Blog';
 import { getVisibleCategoriesWithCounts } from '@/lib/categories';
+import { getRequestCountry } from '@/lib/geo';
+import { canViewTool, visibilityMongoFilter } from '@/lib/visibility';
 import Hero from '@/components/home/Hero';
 import FeaturedCategories from '@/components/home/FeaturedCategories';
 import ToolsSection from '@/components/home/ToolsSection';
@@ -22,25 +24,29 @@ export const metadata = buildPageMetadata({
   absoluteTitle: true,
 });
 
-async function getData() {
+async function getData(country) {
   try {
     await connectDB();
-    const [categoriesWithCounts, featuredTools, trendingTools, recentTools, blogs] = await Promise.all([
-      getVisibleCategoriesWithCounts({ featuredOnly: true, limit: 10 }),
-      Tool.find({ featured: true, status: 'active' })
-        .populate('category', 'name slug')
+    const countryFilter = visibilityMongoFilter(country);
+    // Over-fetch since some results get dropped by the category-override
+    // check (a worldwide tool inside an india_only category) that can't be
+    // expressed in the Mongo filter alone, then trim back to the page limit.
+    const [categoriesWithCounts, featuredToolsRaw, trendingToolsRaw, recentToolsRaw, blogs] = await Promise.all([
+      getVisibleCategoriesWithCounts({ featuredOnly: true, limit: 10, country }),
+      Tool.find({ featured: true, status: 'active', ...countryFilter })
+        .populate('category', 'name slug visibility')
         .sort({ views: -1 })
-        .limit(8)
+        .limit(16)
         .lean(),
-      Tool.find({ trending: true, status: 'active' })
-        .populate('category', 'name slug')
+      Tool.find({ trending: true, status: 'active', ...countryFilter })
+        .populate('category', 'name slug visibility')
         .sort({ views: -1 })
-        .limit(8)
+        .limit(16)
         .lean(),
-      Tool.find({ status: 'active' })
-        .populate('category', 'name slug')
+      Tool.find({ status: 'active', ...countryFilter })
+        .populate('category', 'name slug visibility')
         .sort({ createdAt: -1 })
-        .limit(8)
+        .limit(16)
         .lean(),
       Blog.find({ status: 'published' })
         .select('-content')
@@ -48,6 +54,10 @@ async function getData() {
         .limit(3)
         .lean(),
     ]);
+
+    const featuredTools = featuredToolsRaw.filter((t) => canViewTool(t, t.category, country)).slice(0, 8);
+    const trendingTools = trendingToolsRaw.filter((t) => canViewTool(t, t.category, country)).slice(0, 8);
+    const recentTools = recentToolsRaw.filter((t) => canViewTool(t, t.category, country)).slice(0, 8);
 
     return { categories: categoriesWithCounts, featuredTools, trendingTools, recentTools, blogs };
   } catch (e) {
@@ -57,7 +67,8 @@ async function getData() {
 }
 
 export default async function HomePage() {
-  const { categories, featuredTools, trendingTools, recentTools, blogs } = await getData();
+  const country = await getRequestCountry();
+  const { categories, featuredTools, trendingTools, recentTools, blogs } = await getData(country);
 
   return (
     <>

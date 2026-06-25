@@ -39,6 +39,11 @@ const categorySchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    visibility: {
+      type: String,
+      enum: ['worldwide', 'india_only'],
+      default: 'worldwide',
+    },
   },
   {
     timestamps: true,
