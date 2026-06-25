@@ -23,6 +23,8 @@ const GUIDE_LINKS = [
 const LEGAL_LINKS = [
   { label: 'Privacy Policy', href: '/privacy-policy' },
   { label: 'Terms & Conditions', href: '/terms-and-conditions' },
+  { label: 'Disclaimer', href: '/disclaimer' },
+  { label: 'Cookie Policy', href: '/cookie-policy' },
 ];
 
 async function getFooterCategories() {

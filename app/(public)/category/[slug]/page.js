@@ -12,6 +12,7 @@ import InContentAd from '@/components/ads/InContentAd';
 import VisibilityFilterTracker from '@/components/tools/VisibilityFilterTracker';
 import JsonLd, { buildBreadcrumbSchema, buildCollectionPageSchema, buildFaqSchema } from '@/components/seo/JsonLd';
 import { buildPageMetadata, buildCanonical } from '@/lib/seo/metadata';
+import { generateCategoryKeywords } from '@/lib/seo/keywords';
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
@@ -22,12 +23,17 @@ export async function generateMetadata({ params }) {
     if (status.status !== 'ok') return {};
     const category = status.category;
     const seoContent = getCategorySeoContent(slug);
+    const keywords = generateCategoryKeywords({ name: category.name, description: category.description });
     return buildPageMetadata({
       title: seoContent?.seoTitle || `${category.name} — Free Online Tools`,
       description: seoContent?.seoDescription || category.description || `Browse all free ${category.name} tools. No sign-up required.`,
       path: `/category/${slug}`,
-      keywords: [category.name.toLowerCase(), 'free online tools', 'toolifhub'],
+      keywords,
       absoluteTitle: !!seoContent?.seoTitle,
+      ogImage: `${buildCanonical('/api/og')}?title=${encodeURIComponent(category.name)}&subtitle=${encodeURIComponent('Free Online Tools')}`,
+      ...(category.visibility === 'india_only'
+        ? { languages: { 'en-IN': buildCanonical(`/category/${slug}`) } }
+        : {}),
     });
   } catch {
     return {};

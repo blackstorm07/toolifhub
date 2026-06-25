@@ -5,8 +5,9 @@ import RelatedBlogs from '@/components/seo/RelatedBlogs';
 import RelatedTools from '@/components/tools/RelatedTools';
 import OptimizedImage from '@/components/seo/OptimizedImage';
 import InContentAd from '@/components/ads/InContentAd';
-import JsonLd, { buildArticleSchema, buildBreadcrumbSchema } from '@/components/seo/JsonLd';
+import JsonLd, { buildBlogPostingSchema, buildBreadcrumbSchema } from '@/components/seo/JsonLd';
 import { buildPageMetadata, buildCanonical } from '@/lib/seo/metadata';
+import { generateBlogKeywords } from '@/lib/seo/keywords';
 import { calculateReadingTime } from '@/lib/seo/readingTime';
 import { getRelatedBlogsForBlog, getRelatedToolsForBlog } from '@/lib/seo/internalLinks';
 import { getRequestCountry } from '@/lib/geo';
@@ -23,12 +24,15 @@ export async function generateMetadata({ params }) {
     const blog = await Blog.findOne({ slug, status: 'published' }).lean();
     if (!blog) return {};
     const title = blog.seoTitle || `${blog.title} | ToolifHub`;
+    const keywords = generateBlogKeywords({ title: blog.title, tags: blog.tags || [] });
     return buildPageMetadata({
       title,
       description: blog.seoDescription || blog.excerpt,
       path: `/blog/${slug}`,
-      keywords: blog.tags,
-      ogImage: blog.featuredImage || undefined,
+      keywords,
+      ogImage:
+        blog.featuredImage ||
+        `${buildCanonical('/api/og')}?title=${encodeURIComponent(blog.title)}&subtitle=${encodeURIComponent('ToolifHub Blog')}`,
       ogType: 'article',
       absoluteTitle: !!blog.seoTitle,
     });
@@ -78,7 +82,7 @@ export default async function BlogPostPage({ params }) {
       { label: 'Blog', href: '/blog' },
       { label: blog.title, href: `/blog/${slug}` },
     ]),
-    buildArticleSchema({
+    buildBlogPostingSchema({
       title: blog.title,
       description: blog.excerpt,
       url: pageUrl,
@@ -86,6 +90,8 @@ export default async function BlogPostPage({ params }) {
       datePublished: new Date(publishedAt).toISOString(),
       dateModified: new Date(blog.updatedAt || publishedAt).toISOString(),
       authorName,
+      tags: blog.tags || [],
+      wordCount: readingTime.wordCount,
     }),
   ];
 

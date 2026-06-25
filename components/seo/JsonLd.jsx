@@ -66,6 +66,11 @@ export function buildWebApplicationSchema(props) {
 }
 
 export function buildOrganizationSchema() {
+  const sameAs = (process.env.NEXT_PUBLIC_SOCIAL_PROFILES || '')
+    .split(',')
+    .map((url) => url.trim())
+    .filter(Boolean);
+
   return {
     '@context': 'https://schema.org',
     '@type': 'Organization',
@@ -73,7 +78,7 @@ export function buildOrganizationSchema() {
     url: SITE_URL,
     logo: `${SITE_URL}/og-image.svg`,
     description: 'Free online tools for YouTube, SEO, developers, AI, productivity and more.',
-    sameAs: [],
+    ...(sameAs.length ? { sameAs } : {}),
   };
 }
 
@@ -110,6 +115,39 @@ export function buildArticleSchema({ title, description, url, image, datePublish
       url: SITE_URL,
       logo: { '@type': 'ImageObject', url: `${SITE_URL}/og-image.svg` },
     },
+    mainEntityOfPage: { '@type': 'WebPage', '@id': url },
+  };
+}
+
+export function buildBlogPostingSchema({
+  title,
+  description,
+  url,
+  image,
+  datePublished,
+  dateModified,
+  authorName,
+  tags = [],
+  wordCount,
+}) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: title,
+    description,
+    url,
+    image: image ? (image.startsWith('http') ? image : `${SITE_URL}${image}`) : `${SITE_URL}/og-image.svg`,
+    datePublished,
+    dateModified: dateModified || datePublished,
+    author: { '@type': 'Person', name: authorName || SITE_NAME },
+    publisher: {
+      '@type': 'Organization',
+      name: SITE_NAME,
+      url: SITE_URL,
+      logo: { '@type': 'ImageObject', url: `${SITE_URL}/og-image.svg` },
+    },
+    ...(tags.length ? { keywords: tags.join(', ') } : {}),
+    ...(wordCount ? { wordCount } : {}),
     mainEntityOfPage: { '@type': 'WebPage', '@id': url },
   };
 }

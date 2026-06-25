@@ -60,7 +60,6 @@ categorySchema.virtual('toolCount', {
   count: true,
 });
 
-categorySchema.index({ slug: 1 });
 categorySchema.index({ featured: -1 });
 
 const Category =

@@ -18,6 +18,7 @@ import JsonLd, {
 import ToolRenderer from '@/features/tools/ToolRenderer';
 import { buildPageMetadata, buildToolTitle, buildCanonical } from '@/lib/seo/metadata';
 import { generateToolSeoContent } from '@/lib/seo/toolContent';
+import { generateToolKeywords } from '@/lib/seo/keywords';
 import { getRelatedBlogsForTool } from '@/lib/seo/internalLinks';
 import { getRequestCountry } from '@/lib/geo';
 import { canViewTool, visibilityMongoFilter } from '@/lib/visibility';
@@ -32,12 +33,23 @@ export async function generateMetadata({ params }) {
       .lean();
     if (!tool || !canViewTool(tool, tool.category, country)) return {};
     const title = tool.seoTitle || buildToolTitle(tool.title);
+    const generatedKeywords = generateToolKeywords({
+      title: tool.title,
+      shortDescription: tool.shortDescription,
+      categoryName: tool.category?.name,
+      isIndiaOnly: tool.visibility === 'india_only',
+    });
+    const keywords = Array.from(
+      new Set([...(tool.seoKeywords?.length ? tool.seoKeywords : tool.keywords || []), ...generatedKeywords])
+    ).slice(0, 10);
     return buildPageMetadata({
       title,
       description: tool.seoDescription || tool.shortDescription,
       path: `/tools/${slug}`,
-      keywords: tool.seoKeywords?.length ? tool.seoKeywords : tool.keywords,
+      keywords,
       absoluteTitle: true,
+      ogImage: `${buildCanonical('/api/og')}?title=${encodeURIComponent(tool.title)}&subtitle=${encodeURIComponent('Free Online Tool')}`,
+      ...(tool.visibility === 'india_only' ? { languages: { 'en-IN': buildCanonical(`/tools/${slug}`) } } : {}),
     });
   } catch {
     return {};

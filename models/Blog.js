@@ -65,7 +65,6 @@ const blogSchema = new mongoose.Schema(
   }
 );
 
-blogSchema.index({ slug: 1 });
 blogSchema.index({ status: 1 });
 blogSchema.index({ featured: -1 });
 blogSchema.index({ publishedAt: -1 });

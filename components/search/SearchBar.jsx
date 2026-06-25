@@ -29,12 +29,12 @@ export default function SearchBar({
       <button
         type="button"
         onClick={handleOpen}
-        className={`flex items-center gap-3 w-full ${sizes[size]} bg-muted/60 hover:bg-muted border border-border rounded-xl text-muted-foreground transition-colors cursor-text ${className}`}
+        className={`flex items-center gap-3 w-full ${sizes[size]} bg-muted/60 hover:bg-muted dark:bg-[#161b28] dark:hover:bg-[#1c2233] border border-border dark:border-brand-800/60 rounded-xl text-muted-foreground dark:text-slate-400 transition-colors cursor-text ${className}`}
         aria-label="Open search"
       >
         <Search className="w-4 h-4 flex-shrink-0" />
         <span className="flex-1 text-left truncate">{placeholder}</span>
-        <span className="hidden sm:flex items-center gap-1 text-xs bg-background border border-border rounded px-1.5 py-0.5 flex-shrink-0">
+        <span className="hidden sm:flex items-center gap-1 text-xs bg-background dark:bg-[#0f1420] border border-border dark:border-brand-800/60 rounded px-1.5 py-0.5 flex-shrink-0">
           <kbd>⌘</kbd><kbd>K</kbd>
         </span>
       </button>

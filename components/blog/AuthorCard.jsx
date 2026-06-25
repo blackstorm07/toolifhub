@@ -1,3 +1,5 @@
+import Image from 'next/image';
+
 export default function AuthorCard({ name, avatar }) {
   const initials =
     name
@@ -10,8 +12,13 @@ export default function AuthorCard({ name, avatar }) {
   return (
     <div className="flex items-center gap-4 rounded-2xl border border-border bg-card p-5 sm:p-6">
       {avatar ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={avatar} alt={name} className="w-14 h-14 rounded-full object-cover flex-shrink-0" />
+        <Image
+          src={avatar}
+          alt={name}
+          width={56}
+          height={56}
+          className="w-14 h-14 rounded-full object-cover flex-shrink-0"
+        />
       ) : (
         <div className="w-14 h-14 rounded-full flex-shrink-0 flex items-center justify-center font-bold text-white bg-gradient-to-br from-brand-500 to-purple-600">
           {initials}

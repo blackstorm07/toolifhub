@@ -102,7 +102,6 @@ const toolSchema = new mongoose.Schema(
   }
 );
 
-toolSchema.index({ slug: 1 });
 toolSchema.index({ category: 1 });
 toolSchema.index({ featured: -1 });
 toolSchema.index({ trending: -1 });
