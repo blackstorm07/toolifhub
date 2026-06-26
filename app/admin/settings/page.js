@@ -37,6 +37,7 @@ export default function AdminSettingsPage() {
   const config = {
     appName: process.env.NEXT_PUBLIC_APP_NAME,
     appUrl: process.env.NEXT_PUBLIC_APP_URL,
+    gtmId: process.env.NEXT_PUBLIC_GTM_ID,
     gaId: process.env.NEXT_PUBLIC_GA_ID,
     adsenseClient: process.env.NEXT_PUBLIC_GOOGLE_ADSENSE_CLIENT,
   };
@@ -56,7 +57,8 @@ export default function AdminSettingsPage() {
         <EnvRow label="App Name" envKey="NEXT_PUBLIC_APP_NAME" value={config.appName} required />
         <EnvRow label="App URL" envKey="NEXT_PUBLIC_APP_URL" value={config.appUrl} required />
         <EnvRow label="JWT Secret" envKey="JWT_SECRET" value="[server-side only]" required />
-        <EnvRow label="Google Analytics 4 ID" envKey="NEXT_PUBLIC_GA_ID" value={config.gaId} />
+        <EnvRow label="Google Tag Manager ID" envKey="NEXT_PUBLIC_GTM_ID" value={config.gtmId} />
+        <EnvRow label="Google Analytics 4 ID (GTM reference)" envKey="NEXT_PUBLIC_GA_ID" value={config.gaId} />
         <EnvRow label="Google AdSense Client ID" envKey="NEXT_PUBLIC_GOOGLE_ADSENSE_CLIENT" value={config.adsenseClient} />
       </div>
 
@@ -65,7 +67,7 @@ export default function AdminSettingsPage() {
         <div className="space-y-3 text-sm">
           <div className="flex justify-between"><span className="text-muted-foreground">Site Name</span><span className="font-medium">{config.appName || '—'}</span></div>
           <div className="flex justify-between"><span className="text-muted-foreground">Site URL</span><span className="font-medium">{config.appUrl || '—'}</span></div>
-          <div className="flex justify-between"><span className="text-muted-foreground">Analytics</span><span className="font-medium">{config.gaId && !config.gaId.includes('XXXX') ? 'Connected' : 'Not configured'}</span></div>
+          <div className="flex justify-between"><span className="text-muted-foreground">Analytics (GTM)</span><span className="font-medium">{config.gtmId && !config.gtmId.includes('XXXX') ? 'Connected' : 'Not configured'}</span></div>
           <div className="flex justify-between"><span className="text-muted-foreground">AdSense</span><span className="font-medium">{config.adsenseClient && !config.adsenseClient.includes('XXXX') ? 'Connected' : 'Not configured'}</span></div>
         </div>
       </div>

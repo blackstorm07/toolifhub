@@ -40,6 +40,7 @@ export const config = {
     password: isServer ? optionalEnv('ADMIN_PASSWORD', '') : '',
   },
   analytics: {
+    gtmId: optionalEnv('NEXT_PUBLIC_GTM_ID', ''),
     gaId: optionalEnv('NEXT_PUBLIC_GA_ID', ''),
   },
   ads: {
