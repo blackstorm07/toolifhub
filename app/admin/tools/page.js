@@ -12,7 +12,7 @@ export default function AdminToolsPage() {
   const [search, setSearch] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [editing, setEditing] = useState(null);
-  const [form, setForm] = useState({ title: '', slug: '', category: '', shortDescription: '', icon: '🔧', status: 'active', featured: false, trending: false, keywords: '', seoTitle: '', seoDescription: '', visibility: DEFAULT_VISIBILITY });
+  const [form, setForm] = useState({ title: '', slug: '', category: '', shortDescription: '', icon: '🔧', status: 'active', featured: false, trending: false, analyticsEnabled: true, keywords: '', seoTitle: '', seoDescription: '', visibility: DEFAULT_VISIBILITY });
 
   const fetchData = async () => {
     setLoading(true);
@@ -57,7 +57,7 @@ export default function AdminToolsPage() {
 
   const openAdd = () => {
     setEditing(null);
-    setForm({ title: '', slug: '', category: categories[0]?._id || '', shortDescription: '', icon: '🔧', status: 'active', featured: false, trending: false, keywords: '', seoTitle: '', seoDescription: '', visibility: DEFAULT_VISIBILITY });
+    setForm({ title: '', slug: '', category: categories[0]?._id || '', shortDescription: '', icon: '🔧', status: 'active', featured: false, trending: false, analyticsEnabled: true, keywords: '', seoTitle: '', seoDescription: '', visibility: DEFAULT_VISIBILITY });
     setShowModal(true);
   };
 
@@ -66,7 +66,7 @@ export default function AdminToolsPage() {
     setForm({
       title: tool.title, slug: tool.slug, category: tool.category?._id || tool.category || '',
       shortDescription: tool.shortDescription, icon: tool.icon, status: tool.status,
-      featured: tool.featured, trending: tool.trending,
+      featured: tool.featured, trending: tool.trending, analyticsEnabled: tool.analyticsEnabled !== false,
       keywords: Array.isArray(tool.keywords) ? tool.keywords.join(', ') : tool.keywords || '',
       seoTitle: tool.seoTitle || '', seoDescription: tool.seoDescription || '',
       visibility: tool.visibility || DEFAULT_VISIBILITY,
@@ -249,6 +249,10 @@ export default function AdminToolsPage() {
                 <label className="flex items-center gap-2 text-sm cursor-pointer">
                   <input type="checkbox" checked={form.trending} onChange={e => setForm(f => ({ ...f, trending: e.target.checked }))} className="w-4 h-4 rounded" />
                   Trending
+                </label>
+                <label className="flex items-center gap-2 text-sm cursor-pointer">
+                  <input type="checkbox" checked={form.analyticsEnabled} onChange={e => setForm(f => ({ ...f, analyticsEnabled: e.target.checked }))} className="w-4 h-4 rounded" />
+                  Analytics Enabled
                 </label>
               </div>
 

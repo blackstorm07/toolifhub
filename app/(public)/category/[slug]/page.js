@@ -13,6 +13,7 @@ import VisibilityFilterTracker from '@/components/tools/VisibilityFilterTracker'
 import JsonLd, { buildBreadcrumbSchema, buildCollectionPageSchema, buildFaqSchema } from '@/components/seo/JsonLd';
 import { buildPageMetadata, buildCanonical } from '@/lib/seo/metadata';
 import { generateCategoryKeywords } from '@/lib/seo/keywords';
+import { serializeDoc } from '@/lib/serialize';
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
@@ -59,7 +60,7 @@ async function getData(slug, country) {
   const tools = await Tool.find({ category: category._id, status: 'active', ...visibilityMongoFilter(country) })
     .sort({ featured: -1, views: -1 })
     .lean();
-  return { status: 'ok', category, tools };
+  return { status: 'ok', category: serializeDoc(category), tools: serializeDoc(tools) };
 }
 
 export default async function CategoryPage({ params }) {

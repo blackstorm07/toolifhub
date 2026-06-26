@@ -22,6 +22,7 @@ import { generateToolKeywords } from '@/lib/seo/keywords';
 import { getRelatedBlogsForTool } from '@/lib/seo/internalLinks';
 import { getRequestCountry } from '@/lib/geo';
 import { canViewTool, visibilityMongoFilter } from '@/lib/visibility';
+import { serializeDoc } from '@/lib/serialize';
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
@@ -58,10 +59,11 @@ export async function generateMetadata({ params }) {
 
 async function getData(slug, country) {
   await connectDB();
-  const tool = await Tool.findOne({ slug, status: 'active' })
+  let tool = await Tool.findOne({ slug, status: 'active' })
     .populate('category', 'name slug icon visibility')
     .lean();
   if (!tool) return { status: 'not-found' };
+  tool = serializeDoc(tool);
 
   if (!canViewTool(tool, tool.category, country)) {
     return { status: 'geo-blocked', tool };
@@ -91,9 +93,9 @@ async function getData(slug, country) {
   }
   // Belt-and-suspenders: relatedTools can reference a different category than
   // the current tool, so re-check category-level visibility in JS too.
-  relatedTools = relatedTools.filter((t) => canViewTool(t, t.category, country));
+  relatedTools = relatedTools.filter((t) => canViewTool(t, t.category, country)).map(serializeDoc);
 
-  const relatedBlogs = await getRelatedBlogsForTool(tool);
+  const relatedBlogs = serializeDoc(await getRelatedBlogsForTool(tool));
   return { status: 'ok', tool, relatedTools, relatedBlogs };
 }
 

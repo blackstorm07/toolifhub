@@ -14,6 +14,7 @@ import FooterAd from '@/components/ads/FooterAd';
 import JsonLd, { buildOrganizationSchema, buildWebSiteSchema } from '@/components/seo/JsonLd';
 import { buildPageMetadata } from '@/lib/seo/metadata';
 import { SITE_NAME } from '@/lib/seo/constants';
+import { serializeDoc } from '@/lib/serialize';
 
 export const metadata = buildPageMetadata({
   title: `${SITE_NAME} — One Hub. Unlimited Tools.`,
@@ -59,7 +60,13 @@ async function getData(country) {
     const trendingTools = trendingToolsRaw.filter((t) => canViewTool(t, t.category, country)).slice(0, 8);
     const recentTools = recentToolsRaw.filter((t) => canViewTool(t, t.category, country)).slice(0, 8);
 
-    return { categories: categoriesWithCounts, featuredTools, trendingTools, recentTools, blogs };
+    return {
+      categories: serializeDoc(categoriesWithCounts),
+      featuredTools: serializeDoc(featuredTools),
+      trendingTools: serializeDoc(trendingTools),
+      recentTools: serializeDoc(recentTools),
+      blogs: serializeDoc(blogs),
+    };
   } catch (e) {
     console.error('Home page data error:', e);
     return { categories: [], featuredTools: [], trendingTools: [], recentTools: [], blogs: [] };

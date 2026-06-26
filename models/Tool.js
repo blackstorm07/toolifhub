@@ -53,6 +53,10 @@ const toolSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    analyticsEnabled: {
+      type: Boolean,
+      default: true,
+    },
     status: {
       type: String,
       enum: ['active', 'inactive', 'coming-soon'],

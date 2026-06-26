@@ -43,6 +43,13 @@ const toolRegistry = {
   'remove-duplicate-lines':    dynamic(() => import('./text/DuplicateRemover')),
   'text-reverser':             dynamic(() => import('./text/TextReverser')),
 
+  // AI Tools (Google Gemini-powered)
+  'ai-text-humanizer':         dynamic(() => import('./text/Humanizer')),
+  'ai-content-detector':       dynamic(() => import('./text/Detector')),
+  'ai-paraphraser':            dynamic(() => import('./text/Paraphraser')),
+  'ai-text-summarizer':        dynamic(() => import('./text/Summarizer')),
+  'ai-grammar-checker':        dynamic(() => import('./text/GrammarChecker')),
+
   // SEO Tools
   'meta-title-generator':        dynamic(() => import('./seo/MetaTitleGenerator')),
   'meta-description-generator':  dynamic(() => import('./seo/MetaDescriptionGenerator')),
