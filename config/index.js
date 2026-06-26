@@ -45,6 +45,7 @@ export const config = {
   },
   ads: {
     adsenseClient: optionalEnv('NEXT_PUBLIC_GOOGLE_ADSENSE_CLIENT', ''),
+    headerSlot: optionalEnv('NEXT_PUBLIC_GOOGLE_ADSENSE_HEADER_SLOT', ''),
   },
   pagination: {
     toolsPerPage: 24,

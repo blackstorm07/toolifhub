@@ -1,12 +1,15 @@
 import AdUnit from './AdUnit';
+import config from '@/config';
 
-// Replace slot IDs with your actual AdSense slot IDs after getting approval
 export default function HeaderAd() {
+  const slot = config.ads.headerSlot;
+  if (!slot) return null;
+
   return (
     <div className="hidden md:block w-full py-2 bg-muted/20">
       <div className="container">
         <AdUnit
-          slot="YOUR_HEADER_AD_SLOT_ID"
+          slot={slot}
           format="horizontal"
           className="min-h-[90px]"
           style={{ minHeight: '90px' }}
