@@ -9,19 +9,19 @@ import FeaturedCategories from '@/components/home/FeaturedCategories';
 import ToolsSection from '@/components/home/ToolsSection';
 import BlogPreview from '@/components/home/BlogPreview';
 import Newsletter from '@/components/home/Newsletter';
-import HeaderAd from '@/components/ads/HeaderAd';
-import FooterAd from '@/components/ads/FooterAd';
+import HomepageContentAd from '@/components/ads/HomepageContentAd';
 import JsonLd, { buildOrganizationSchema, buildWebSiteSchema } from '@/components/seo/JsonLd';
 import { buildPageMetadata } from '@/lib/seo/metadata';
 import { SITE_NAME } from '@/lib/seo/constants';
 import { serializeDoc } from '@/lib/serialize';
+import { HOMEPAGE_KEYWORDS } from '@/lib/seo/keywordStrategy';
 
 export const metadata = buildPageMetadata({
   title: `${SITE_NAME} — One Hub. Unlimited Tools.`,
   description:
     'Free online tools for YouTube, SEO, developers, AI, productivity and more. 500+ tools — no sign-up required.',
   path: '/',
-  keywords: ['free online tools', 'youtube tools', 'seo tools', 'developer tools', 'ai tools'],
+  keywords: HOMEPAGE_KEYWORDS,
   absoluteTitle: true,
 });
 
@@ -82,7 +82,7 @@ export default async function HomePage() {
       <JsonLd data={[buildOrganizationSchema(), buildWebSiteSchema()]} />
 
       <Hero />
-      <HeaderAd />
+      <HomepageContentAd />
       <FeaturedCategories categories={categories} />
       {featuredTools.length > 0 && (
         <ToolsSection title="Featured Tools" badge="Editor's Pick" tools={featuredTools} viewAllHref="/categories" />
@@ -95,7 +95,6 @@ export default async function HomePage() {
       )}
       <BlogPreview blogs={blogs} />
       <Newsletter />
-      <FooterAd />
     </>
   );
 }

@@ -8,11 +8,12 @@ import { visibilityMongoFilter } from '@/lib/visibility';
 import ToolGrid from '@/components/tools/ToolGrid';
 import Breadcrumb from '@/components/tools/Breadcrumb';
 import CategorySeoContent from '@/components/category/CategorySeoContent';
-import InContentAd from '@/components/ads/InContentAd';
+import CategoryBannerAd from '@/components/ads/CategoryBannerAd';
 import VisibilityFilterTracker from '@/components/tools/VisibilityFilterTracker';
 import JsonLd, { buildBreadcrumbSchema, buildCollectionPageSchema, buildFaqSchema } from '@/components/seo/JsonLd';
 import { buildPageMetadata, buildCanonical } from '@/lib/seo/metadata';
 import { generateCategoryKeywords } from '@/lib/seo/keywords';
+import { getCategoryKeywordOverride, mergeKeywords } from '@/lib/seo/keywordStrategy';
 import { serializeDoc } from '@/lib/serialize';
 
 export async function generateMetadata({ params }) {
@@ -24,7 +25,10 @@ export async function generateMetadata({ params }) {
     if (status.status !== 'ok') return {};
     const category = status.category;
     const seoContent = getCategorySeoContent(slug);
-    const keywords = generateCategoryKeywords({ name: category.name, description: category.description });
+    const keywords = mergeKeywords(
+      getCategoryKeywordOverride(slug),
+      generateCategoryKeywords({ name: category.name, description: category.description })
+    );
     return buildPageMetadata({
       title: seoContent?.seoTitle || `${category.name} — Free Online Tools`,
       description: seoContent?.seoDescription || category.description || `Browse all free ${category.name} tools. No sign-up required.`,
@@ -130,8 +134,9 @@ export default async function CategoryPage({ params }) {
           )}
         </div>
 
+        <CategoryBannerAd />
+
         <ToolGrid tools={tools} />
-        <InContentAd />
 
         {seoContent && (
           <CategorySeoContent seoContent={seoContent} category={category} tools={tools} />

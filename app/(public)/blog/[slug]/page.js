@@ -4,10 +4,14 @@ import Blog from '@/models/Blog';
 import RelatedBlogs from '@/components/seo/RelatedBlogs';
 import RelatedTools from '@/components/tools/RelatedTools';
 import OptimizedImage from '@/components/seo/OptimizedImage';
-import InContentAd from '@/components/ads/InContentAd';
+import BlogTopAd from '@/components/ads/BlogTopAd';
+import BlogMiddleAd from '@/components/ads/BlogMiddleAd';
+import SidebarAd from '@/components/ads/SidebarAd';
+import { splitBlogContent } from '@/lib/ads/splitBlogContent';
 import JsonLd, { buildBlogPostingSchema, buildBreadcrumbSchema } from '@/components/seo/JsonLd';
 import { buildPageMetadata, buildCanonical } from '@/lib/seo/metadata';
 import { generateBlogKeywords } from '@/lib/seo/keywords';
+import { BLOG_KEYWORD_POOL, mergeKeywords } from '@/lib/seo/keywordStrategy';
 import { calculateReadingTime } from '@/lib/seo/readingTime';
 import { getRelatedBlogsForBlog, getRelatedToolsForBlog } from '@/lib/seo/internalLinks';
 import { getRequestCountry } from '@/lib/geo';
@@ -24,7 +28,19 @@ export async function generateMetadata({ params }) {
     const blog = await Blog.findOne({ slug, status: 'published' }).lean();
     if (!blog) return {};
     const title = blog.seoTitle || `${blog.title} | ToolifHub`;
-    const keywords = generateBlogKeywords({ title: blog.title, tags: blog.tags || [] });
+    const lowerTitle = blog.title.toLowerCase();
+    const relevantPool = BLOG_KEYWORD_POOL.filter((kw) => {
+      const k = kw.toLowerCase();
+      if (k.includes('ai') && lowerTitle.includes('ai')) return true;
+      if (k.includes('developer') && (lowerTitle.includes('develop') || lowerTitle.includes('code'))) return true;
+      if (k === 'how to' && lowerTitle.startsWith('how to')) return true;
+      if (k === 'tutorials' || k === 'tool guides') return true;
+      return false;
+    }).slice(0, 2);
+    const keywords = mergeKeywords(
+      relevantPool,
+      generateBlogKeywords({ title: blog.title, tags: blog.tags || [] })
+    );
     return buildPageMetadata({
       title,
       description: blog.seoDescription || blog.excerpt,
@@ -76,6 +92,7 @@ export default async function BlogPostPage({ params }) {
   const authorName = blog.author?.name || 'ToolifHub Team';
   const publishedAt = blog.publishedAt || blog.createdAt;
   const readingTime = calculateReadingTime(blog.content);
+  const { before: contentBefore, after: contentAfter } = splitBlogContent(blog.content);
 
   const schemas = [
     buildBreadcrumbSchema([
@@ -127,12 +144,18 @@ export default async function BlogPostPage({ params }) {
         <article>
           <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_16rem] gap-12">
             <div className="max-w-[820px] w-full mx-auto xl:mx-0">
-              <InContentAd />
+              <BlogTopAd />
             </div>
-            <div className="hidden xl:block" />
+            <aside className="hidden xl:block">
+              <SidebarAd />
+            </aside>
           </div>
 
-          <ArticleWithToc html={blog.content} />
+          <ArticleWithToc
+            beforeHtml={contentBefore}
+            afterHtml={contentAfter}
+            midContent={contentAfter ? <BlogMiddleAd /> : null}
+          />
 
           <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_16rem] gap-12">
             <div className="max-w-[820px] w-full mx-auto xl:mx-0">

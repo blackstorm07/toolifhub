@@ -1,6 +1,5 @@
 // Generated dynamically from env so the publisher ID never drifts from the
-// AdSense script loaded in app/layout.js. Static /public/ads.txt would risk
-// going stale if the AdSense account ID is rotated without updating both places.
+// AdSense script loaded via components/ads/AdSenseScript.jsx in app/layout.js.
 export const dynamic = 'force-static';
 export const revalidate = 86400;
 

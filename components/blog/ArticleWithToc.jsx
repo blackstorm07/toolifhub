@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 
-export default function ArticleWithToc({ html }) {
+export default function ArticleWithToc({ beforeHtml = '', afterHtml = '', midContent = null }) {
   const contentRef = useRef(null);
   const [headings, setHeadings] = useState([]);
   const [activeId, setActiveId] = useState('');
@@ -39,7 +39,7 @@ export default function ArticleWithToc({ html }) {
     );
     nodes.forEach((n) => observer.observe(n));
     return () => observer.disconnect();
-  }, [html]);
+  }, [beforeHtml, afterHtml]);
 
   const handleJump = (e, id) => {
     e.preventDefault();
@@ -48,11 +48,11 @@ export default function ArticleWithToc({ html }) {
 
   return (
     <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_16rem] gap-12 items-start">
-      <div
-        ref={contentRef}
-        className="article-body max-w-[820px] w-full mx-auto xl:mx-0"
-        dangerouslySetInnerHTML={{ __html: html }}
-      />
+      <div ref={contentRef} className="article-body max-w-[820px] w-full mx-auto xl:mx-0">
+        {beforeHtml && <div dangerouslySetInnerHTML={{ __html: beforeHtml }} />}
+        {midContent}
+        {afterHtml && <div dangerouslySetInnerHTML={{ __html: afterHtml }} />}
+      </div>
 
       {headings.length > 1 && (
         <nav aria-label="Table of contents" className="hidden xl:block sticky top-28 self-start">

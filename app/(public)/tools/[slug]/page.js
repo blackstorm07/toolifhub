@@ -7,7 +7,9 @@ import RelatedTools from '@/components/tools/RelatedTools';
 import ToolSeoContent from '@/components/tools/ToolSeoContent';
 import RelatedBlogs from '@/components/seo/RelatedBlogs';
 import ShareButtons from '@/components/tools/ShareButtons';
-import InContentAd from '@/components/ads/InContentAd';
+import ToolTopAd from '@/components/ads/ToolTopAd';
+import ToolMiddleAd from '@/components/ads/ToolMiddleAd';
+import ToolBottomAd from '@/components/ads/ToolBottomAd';
 import SidebarAd from '@/components/ads/SidebarAd';
 import VisibilityFilterTracker from '@/components/tools/VisibilityFilterTracker';
 import JsonLd, {
@@ -19,6 +21,7 @@ import ToolRenderer from '@/features/tools/ToolRenderer';
 import { buildPageMetadata, buildToolTitle, buildCanonical } from '@/lib/seo/metadata';
 import { generateToolSeoContent } from '@/lib/seo/toolContent';
 import { generateToolKeywords } from '@/lib/seo/keywords';
+import { getToolKeywordOverride, mergeKeywords } from '@/lib/seo/keywordStrategy';
 import { getRelatedBlogsForTool } from '@/lib/seo/internalLinks';
 import { getRequestCountry } from '@/lib/geo';
 import { canViewTool, visibilityMongoFilter } from '@/lib/visibility';
@@ -40,9 +43,10 @@ export async function generateMetadata({ params }) {
       categoryName: tool.category?.name,
       isIndiaOnly: tool.visibility === 'india_only',
     });
-    const keywords = Array.from(
-      new Set([...(tool.seoKeywords?.length ? tool.seoKeywords : tool.keywords || []), ...generatedKeywords])
-    ).slice(0, 10);
+    const keywords = mergeKeywords(
+      getToolKeywordOverride(slug),
+      [...(tool.seoKeywords?.length ? tool.seoKeywords : tool.keywords || []), ...generatedKeywords]
+    );
     return buildPageMetadata({
       title,
       description: tool.seoDescription || tool.shortDescription,
@@ -174,9 +178,11 @@ export default async function ToolPage({ params }) {
               </div>
             </div>
 
+            <ToolTopAd />
+
             <ToolRenderer slug={slug} tool={tool} />
 
-            <InContentAd />
+            <ToolMiddleAd />
 
             <ToolSeoContent tool={tool} categoryName={tool.category.name} />
 
@@ -185,6 +191,8 @@ export default async function ToolPage({ params }) {
             <div className="pt-4 border-t border-border">
               <ShareButtons url={toolUrl} title={tool.title} slug={slug} />
             </div>
+
+            <ToolBottomAd />
 
             <RelatedTools tools={relatedTools} />
             <RelatedBlogs blogs={relatedBlogs} />

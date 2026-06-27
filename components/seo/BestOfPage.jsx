@@ -6,7 +6,7 @@ import { BEST_OF_ROUTES, getCategorySeoContent } from '@/lib/seo/categoryContent
 import ToolGrid from '@/components/tools/ToolGrid';
 import Breadcrumb from '@/components/tools/Breadcrumb';
 import CategorySeoContent from '@/components/category/CategorySeoContent';
-import InContentAd from '@/components/ads/InContentAd';
+import CategoryBannerAd from '@/components/ads/CategoryBannerAd';
 import JsonLd, { buildBreadcrumbSchema, buildCollectionPageSchema, buildFaqSchema } from '@/components/seo/JsonLd';
 import { buildPageMetadata, buildCanonical } from '@/lib/seo/metadata';
 import { getRequestCountry } from '@/lib/geo';
@@ -88,8 +88,9 @@ export default async function BestOfPage({ routeSlug }) {
           </p>
         </div>
 
+        <CategoryBannerAd />
+
         <ToolGrid tools={tools} />
-        <InContentAd />
 
         {seoContent && (
           <CategorySeoContent seoContent={seoContent} category={category} tools={tools} />

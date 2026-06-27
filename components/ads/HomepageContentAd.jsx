@@ -1,18 +1,18 @@
 import AdUnit from './AdUnit';
 import config from '@/config';
 
-export default function HeaderAd() {
-  const slot = config.ads.slots.header;
+export default function HomepageContentAd() {
+  const slot = config.ads.slots.homepageContent;
   if (!config.ads.adsenseClient || !slot) return null;
 
   return (
-    <div className="w-full py-2 bg-muted/20 border-b border-border/50">
+    <div className="my-8">
       <div className="container">
         <AdUnit
           slot={slot}
           format="auto"
-          className="min-h-[50px] md:min-h-[90px]"
-          style={{ minHeight: '50px' }}
+          className="min-h-[250px]"
+          style={{ minHeight: '250px' }}
         />
       </div>
     </div>

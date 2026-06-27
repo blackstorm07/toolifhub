@@ -32,6 +32,7 @@ const toolRegistry = {
 
   // Utility Tools
   'qr-code-generator':     dynamic(() => import('./utility/QRCodeGenerator')),
+  'color-picker':          dynamic(() => import('./utility/ColorPicker')),
 
   // Text Tools
   'word-counter':              dynamic(() => import('./text/WordCounter')),

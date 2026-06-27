@@ -45,7 +45,18 @@ export const config = {
   },
   ads: {
     adsenseClient: optionalEnv('NEXT_PUBLIC_GOOGLE_ADSENSE_CLIENT', ''),
-    headerSlot: optionalEnv('NEXT_PUBLIC_GOOGLE_ADSENSE_HEADER_SLOT', ''),
+    slots: {
+      header: optionalEnv('NEXT_PUBLIC_GOOGLE_ADSENSE_HEADER_SLOT', '2106750160'),
+      homepageContent: optionalEnv('NEXT_PUBLIC_GOOGLE_ADSENSE_HOMEPAGE_SLOT', '7660584898'),
+      toolTop: optionalEnv('NEXT_PUBLIC_GOOGLE_ADSENSE_TOOL_TOP_SLOT', '3317593746'),
+      toolMiddle: optionalEnv('NEXT_PUBLIC_GOOGLE_ADSENSE_TOOL_MIDDLE_SLOT', '8969797136'),
+      toolBottom: optionalEnv('NEXT_PUBLIC_GOOGLE_ADSENSE_TOOL_BOTTOM_SLOT', '5030552128'),
+      blogTop: optionalEnv('NEXT_PUBLIC_GOOGLE_ADSENSE_BLOG_TOP_SLOT', '2404388781'),
+      blogMiddle: optionalEnv('NEXT_PUBLIC_GOOGLE_ADSENSE_BLOG_MIDDLE_SLOT', '8081432898'),
+      category: optionalEnv('NEXT_PUBLIC_GOOGLE_ADSENSE_CATEGORY_SLOT', '4647408746'),
+      sidebar: optionalEnv('NEXT_PUBLIC_GOOGLE_ADSENSE_SIDEBAR_SLOT', '8203510373'),
+      footer: optionalEnv('NEXT_PUBLIC_GOOGLE_ADSENSE_FOOTER_SLOT', '9691430409'),
+    },
   },
   pagination: {
     toolsPerPage: 24,
