@@ -64,7 +64,8 @@ const toolRegistry = {
   'lsi-keyword-generator':        dynamic(() => import('./seo/LsiKeywordGenerator')),
   'related-keywords-finder':      dynamic(() => import('./seo/RelatedKeywordsFinder')),
   'keyword-position-checker':     dynamic(() => import('./seo/KeywordPositionChecker')),
-  'search-volume-checker':        dynamic(() => import('./seo/SearchVolumeChecker')),
+  // Temporarily disabled — re-enable when keyword-data provider is connected
+  // 'search-volume-checker':        dynamic(() => import('./seo/SearchVolumeChecker')),
   'keyword-difficulty-checker':   dynamic(() => import('./seo/KeywordDifficultyChecker')),
 
   // Calculators
