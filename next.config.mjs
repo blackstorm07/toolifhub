@@ -31,6 +31,19 @@ const nextConfig = {
         source: '/sitemap(.*).xml',
         headers: [{ key: 'Cache-Control', value: 'public, max-age=3600, s-maxage=3600' }],
       },
+      {
+        // Cross-origin isolation enables SharedArrayBuffer, which lets
+        // @imgly/background-removal use multi-threaded WASM (faster).
+        // Scoped to this single route only: applying COEP site-wide would
+        // block third-party AdSense iframes on every other tool page.
+        // 'credentialless' (rather than 'require-corp') avoids requiring
+        // CORP headers from every cross-origin resource on this page.
+        source: '/tools/remove-background',
+        headers: [
+          { key: 'Cross-Origin-Opener-Policy', value: 'same-origin' },
+          { key: 'Cross-Origin-Embedder-Policy', value: 'credentialless' },
+        ],
+      },
     ];
   },
 };

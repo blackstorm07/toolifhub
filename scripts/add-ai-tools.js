@@ -111,16 +111,16 @@ async function run() {
   await mongoose.connect(MONGODB_URI, { dbName: DATABASE_NAME });
   console.log('✅ Connected to MongoDB:', mongoose.connection.db.databaseName, '\n');
 
-  let category = await Category.findOne({ slug: 'text-tools' });
+  let category = await Category.findOne({ slug: 'ai-tools' });
   if (!category) {
     category = await Category.create({
-      name: 'Text Tools', slug: 'text-tools', icon: '📝',
-      description: 'Manipulate and analyze text with word counters, case converters, Lorem ipsum generators, and text transformers.',
-      featured: true, order: 4,
+      name: 'AI Tools', slug: 'ai-tools', icon: '🤖',
+      description: 'Boost your productivity with free AI-powered tools. Humanize AI text, detect AI-generated content, summarize articles, paraphrase text, check grammar, and more—all in one place.',
+      featured: true, order: 11,
     });
-    console.log('   + Created "Text Tools" category (it didn\'t exist)\n');
+    console.log('   + Created "AI Tools" category (it didn\'t exist)\n');
   } else {
-    console.log('   Using existing "Text Tools" category\n');
+    console.log('   Using existing "AI Tools" category\n');
   }
 
   let created = 0, skipped = 0;

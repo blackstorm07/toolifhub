@@ -82,6 +82,18 @@ const toolRegistry = {
   'post-office-finder':   dynamic(() => import('./government/PostOfficeFinder')),
   'ifsc-code-finder':     dynamic(() => import('./government/IFSCFinder')),
   'mandi-price-checker':  dynamic(() => import('./government/MandiPriceChecker')),
+
+  // Image Tools
+  'image-compressor':         dynamic(() => import('./image/ImageCompressor')),
+  'png-to-jpg':                dynamic(() => import('./image/PngToJpg')),
+  'jpg-to-png':                dynamic(() => import('./image/JpgToPng')),
+  'webp-converter':            dynamic(() => import('./image/WebpConverter')),
+  'image-resizer':             dynamic(() => import('./image/ImageResizer')),
+  'image-cropper':             dynamic(() => import('./image/ImageCropper')),
+  'remove-background':         dynamic(() => import('./image/RemoveBackground')),
+  'image-metadata-viewer':     dynamic(() => import('./image/ImageMetadataViewer')),
+  'remove-exif':               dynamic(() => import('./image/RemoveExif')),
+  'image-optimizer':           dynamic(() => import('./image/ImageOptimizer')),
 };
 
 // Tools that render their own card chrome and manage popovers/overflow
