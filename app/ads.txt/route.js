@@ -1,5 +1,5 @@
 // Generated dynamically from env so the publisher ID never drifts from the
-// AdSense script loaded via components/ads/AdSenseScript.jsx in app/layout.js.
+// AdSense script in <head> via components/ads/AdSenseScript.jsx (app/layout.js).
 export const dynamic = 'force-static';
 export const revalidate = 86400;
 

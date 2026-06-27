@@ -27,9 +27,9 @@ export default function RootLayout({ children }) {
     <html lang="en" suppressHydrationWarning className={inter.variable}>
       <head>
         <GoogleTagManager />
+        <AdSenseScript />
       </head>
       <body className="min-h-screen bg-background font-sans antialiased">
-        <AdSenseScript />
         <GoogleTagManagerNoScript />
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <GTMPageTracker />
