@@ -1,3 +1,4 @@
+import dynamic from 'next/dynamic';
 import { unstable_cache } from 'next/cache';
 import connectDB from '@/lib/mongodb';
 import Tool from '@/models/Tool';
@@ -9,7 +10,11 @@ import Hero from '@/components/home/Hero';
 import FeaturedCategories from '@/components/home/FeaturedCategories';
 import ToolsSection from '@/components/home/ToolsSection';
 import BlogPreview from '@/components/home/BlogPreview';
-import Newsletter from '@/components/home/Newsletter';
+
+// Below-the-fold form with its own client JS — content is still
+// server-rendered (ssr: true) for SEO/no layout shift, but its JS chunk is
+// split out of the main bundle instead of shipping on the critical path.
+const Newsletter = dynamic(() => import('@/components/home/Newsletter'), { ssr: true });
 import HomepageContentAd from '@/components/ads/HomepageContentAd';
 import JsonLd, { buildOrganizationSchema, buildWebSiteSchema } from '@/components/seo/JsonLd';
 import { buildPageMetadata } from '@/lib/seo/metadata';

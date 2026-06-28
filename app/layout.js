@@ -1,4 +1,4 @@
-import { Inter } from 'next/font/google';
+import { Inter, JetBrains_Mono } from 'next/font/google';
 import { ThemeProvider } from '@/components/layout/ThemeProvider';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
@@ -20,11 +20,21 @@ const inter = Inter({
   preload: true,
 });
 
+// Secondary font used only for code blocks (lib/seo content, JSON/HTML
+// formatter outputs) — not above-the-fold, so it isn't preloaded.
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  weight: ['400', '500'],
+  variable: '--font-jetbrains-mono',
+  display: 'swap',
+  preload: false,
+});
+
 export const metadata = buildRootMetadata();
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" suppressHydrationWarning className={inter.variable}>
+    <html lang="en" suppressHydrationWarning className={`${inter.variable} ${jetbrainsMono.variable}`}>
       <head>
         <GoogleTagManager />
         <AdSenseScript />

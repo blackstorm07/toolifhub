@@ -2,98 +2,108 @@
 
 import dynamic from 'next/dynamic';
 
+// Reserves the tool UI's typical height while its chunk loads, so the
+// component popping in doesn't shift surrounding layout (CLS).
+function ToolSkeleton() {
+  return (
+    <div className="min-h-[280px] rounded-xl bg-muted/40 animate-pulse" aria-hidden="true" />
+  );
+}
+
+const loadTool = (importFn) => dynamic(importFn, { loading: ToolSkeleton });
+
 // Tool registry: maps slug → dynamic import
 const toolRegistry = {
   // YouTube Tools
-  'youtube-tag-generator':       dynamic(() => import('./youtube/TagGenerator')),
-  'youtube-title-generator':     dynamic(() => import('./youtube/TitleGenerator')),
-  'youtube-description-generator': dynamic(() => import('./youtube/DescriptionGenerator')),
-  'youtube-hashtag-generator':   dynamic(() => import('./youtube/HashtagGenerator')),
-  'youtube-earnings-calculator': dynamic(() => import('./youtube/EarningsCalculator')),
+  'youtube-tag-generator':       loadTool(() => import('./youtube/TagGenerator')),
+  'youtube-title-generator':     loadTool(() => import('./youtube/TitleGenerator')),
+  'youtube-description-generator': loadTool(() => import('./youtube/DescriptionGenerator')),
+  'youtube-hashtag-generator':   loadTool(() => import('./youtube/HashtagGenerator')),
+  'youtube-earnings-calculator': loadTool(() => import('./youtube/EarningsCalculator')),
 
   // Developer Tools
-  'json-formatter':    dynamic(() => import('./developer/JsonFormatter')),
-  'base64-encoder':    dynamic(() => import('./developer/Base64Tool')),
-  'base64-decoder':    dynamic(() => import('./developer/Base64Tool')),
-  'base64-encoder-decoder': dynamic(() => import('./developer/Base64Tool')),
-  'uuid-generator':    dynamic(() => import('./developer/UUIDGenerator')),
-  'hash-generator':    dynamic(() => import('./developer/HashGenerator')),
-  'html-formatter':    dynamic(() => import('./developer/HtmlFormatter')),
-  'json-validator':    dynamic(() => import('./developer/JsonFormatter')),
-  'css-minifier':      dynamic(() => import('./developer/CssMinifier')),
-  'js-minifier':       dynamic(() => import('./developer/JsMinifier')),
-  'timestamp-converter':   dynamic(() => import('./developer/TimestampConverter')),
-  'jwt-decoder':           dynamic(() => import('./developer/JWTDecoder')),
-  'regex-tester':          dynamic(() => import('./developer/RegexTester')),
-  'json-to-csv-converter': dynamic(() => import('./developer/JsonToCsvConverter')),
+  'json-formatter':    loadTool(() => import('./developer/JsonFormatter')),
+  'base64-encoder':    loadTool(() => import('./developer/Base64Tool')),
+  'base64-decoder':    loadTool(() => import('./developer/Base64Tool')),
+  'base64-encoder-decoder': loadTool(() => import('./developer/Base64Tool')),
+  'uuid-generator':    loadTool(() => import('./developer/UUIDGenerator')),
+  'hash-generator':    loadTool(() => import('./developer/HashGenerator')),
+  'html-formatter':    loadTool(() => import('./developer/HtmlFormatter')),
+  'json-validator':    loadTool(() => import('./developer/JsonFormatter')),
+  'css-minifier':      loadTool(() => import('./developer/CssMinifier')),
+  'js-minifier':       loadTool(() => import('./developer/JsMinifier')),
+  'timestamp-converter':   loadTool(() => import('./developer/TimestampConverter')),
+  'jwt-decoder':           loadTool(() => import('./developer/JWTDecoder')),
+  'regex-tester':          loadTool(() => import('./developer/RegexTester')),
+  'json-to-csv-converter': loadTool(() => import('./developer/JsonToCsvConverter')),
 
   // Security Tools
-  'password-generator':    dynamic(() => import('./security/PasswordGenerator')),
+  'password-generator':    loadTool(() => import('./security/PasswordGenerator')),
 
   // Utility Tools
-  'qr-code-generator':     dynamic(() => import('./utility/QRCodeGenerator')),
-  'color-picker':          dynamic(() => import('./utility/ColorPicker')),
+  'qr-code-generator':     loadTool(() => import('./utility/QRCodeGenerator')),
+  'color-picker':          loadTool(() => import('./utility/ColorPicker')),
 
   // Text Tools
-  'word-counter':              dynamic(() => import('./text/WordCounter')),
-  'character-counter':         dynamic(() => import('./text/WordCounter')),
-  'case-converter':            dynamic(() => import('./text/CaseConverter')),
-  'lorem-ipsum-generator':     dynamic(() => import('./text/LoremIpsumGenerator')),
-  'slug-generator':            dynamic(() => import('./text/SlugGenerator')),
-  'text-repeater':             dynamic(() => import('./text/TextRepeater')),
-  'remove-duplicate-lines':    dynamic(() => import('./text/DuplicateRemover')),
-  'text-reverser':             dynamic(() => import('./text/TextReverser')),
+  'word-counter':              loadTool(() => import('./text/WordCounter')),
+  'character-counter':         loadTool(() => import('./text/WordCounter')),
+  'case-converter':            loadTool(() => import('./text/CaseConverter')),
+  'lorem-ipsum-generator':     loadTool(() => import('./text/LoremIpsumGenerator')),
+  'slug-generator':            loadTool(() => import('./text/SlugGenerator')),
+  'text-repeater':             loadTool(() => import('./text/TextRepeater')),
+  'remove-duplicate-lines':    loadTool(() => import('./text/DuplicateRemover')),
+  'text-reverser':             loadTool(() => import('./text/TextReverser')),
 
   // AI Tools (Google Gemini-powered)
-  'ai-text-humanizer':         dynamic(() => import('./text/Humanizer')),
-  'ai-content-detector':       dynamic(() => import('./text/Detector')),
-  'ai-paraphraser':            dynamic(() => import('./text/Paraphraser')),
-  'ai-text-summarizer':        dynamic(() => import('./text/Summarizer')),
-  'ai-grammar-checker':        dynamic(() => import('./text/GrammarChecker')),
+  'ai-text-humanizer':         loadTool(() => import('./text/Humanizer')),
+  'ai-content-detector':       loadTool(() => import('./text/Detector')),
+  'ai-paraphraser':            loadTool(() => import('./text/Paraphraser')),
+  'ai-text-summarizer':        loadTool(() => import('./text/Summarizer')),
+  'ai-grammar-checker':        loadTool(() => import('./text/GrammarChecker')),
 
   // SEO Tools
-  'meta-title-generator':        dynamic(() => import('./seo/MetaTitleGenerator')),
-  'meta-description-generator':  dynamic(() => import('./seo/MetaDescriptionGenerator')),
-  'serp-preview-tool':            dynamic(() => import('./seo/SerpPreviewTool')),
-  'open-graph-tag-generator':     dynamic(() => import('./seo/OpenGraphGenerator')),
-  'twitter-card-generator':       dynamic(() => import('./seo/TwitterCardGenerator')),
-  'meta-tags-analyzer':           dynamic(() => import('./seo/MetaTagsAnalyzer')),
-  'keyword-density-checker':      dynamic(() => import('./seo/KeywordDensityChecker')),
-  'long-tail-keyword-generator':  dynamic(() => import('./seo/LongTailKeywordGenerator')),
-  'keyword-suggestion-tool':      dynamic(() => import('./seo/KeywordSuggestionTool')),
-  'lsi-keyword-generator':        dynamic(() => import('./seo/LsiKeywordGenerator')),
-  'related-keywords-finder':      dynamic(() => import('./seo/RelatedKeywordsFinder')),
-  'keyword-position-checker':     dynamic(() => import('./seo/KeywordPositionChecker')),
+  'meta-title-generator':        loadTool(() => import('./seo/MetaTitleGenerator')),
+  'meta-description-generator':  loadTool(() => import('./seo/MetaDescriptionGenerator')),
+  'serp-preview-tool':            loadTool(() => import('./seo/SerpPreviewTool')),
+  'open-graph-tag-generator':     loadTool(() => import('./seo/OpenGraphGenerator')),
+  'twitter-card-generator':       loadTool(() => import('./seo/TwitterCardGenerator')),
+  'meta-tags-analyzer':           loadTool(() => import('./seo/MetaTagsAnalyzer')),
+  'keyword-density-checker':      loadTool(() => import('./seo/KeywordDensityChecker')),
+  'long-tail-keyword-generator':  loadTool(() => import('./seo/LongTailKeywordGenerator')),
+  'keyword-suggestion-tool':      loadTool(() => import('./seo/KeywordSuggestionTool')),
+  'lsi-keyword-generator':        loadTool(() => import('./seo/LsiKeywordGenerator')),
+  'related-keywords-finder':      loadTool(() => import('./seo/RelatedKeywordsFinder')),
+  'keyword-position-checker':     loadTool(() => import('./seo/KeywordPositionChecker')),
   // Temporarily disabled — re-enable when keyword-data provider is connected
-  // 'search-volume-checker':        dynamic(() => import('./seo/SearchVolumeChecker')),
-  'keyword-difficulty-checker':   dynamic(() => import('./seo/KeywordDifficultyChecker')),
+  // 'search-volume-checker':        loadTool(() => import('./seo/SearchVolumeChecker')),
+  'keyword-difficulty-checker':   loadTool(() => import('./seo/KeywordDifficultyChecker')),
 
   // Calculators
-  'age-calculator':        dynamic(() => import('./calculators/AgeCalculator')),
-  'bmi-calculator':        dynamic(() => import('./calculators/BMICalculator')),
-  'percentage-calculator': dynamic(() => import('./calculators/PercentageCalculator')),
-  'emi-calculator':        dynamic(() => import('./calculators/EMICalculator')),
-  'gst-calculator':        dynamic(() => import('./calculators/GSTCalculator')),
-  'discount-calculator':   dynamic(() => import('./calculators/DiscountCalculator')),
+  'age-calculator':        loadTool(() => import('./calculators/AgeCalculator')),
+  'bmi-calculator':        loadTool(() => import('./calculators/BMICalculator')),
+  'percentage-calculator': loadTool(() => import('./calculators/PercentageCalculator')),
+  'emi-calculator':        loadTool(() => import('./calculators/EMICalculator')),
+  'gst-calculator':        loadTool(() => import('./calculators/GSTCalculator')),
+  'discount-calculator':   loadTool(() => import('./calculators/DiscountCalculator')),
 
   // Government Tools
-  'gstin-validator':      dynamic(() => import('./government/GSTINValidator')),
-  'pin-code-lookup':      dynamic(() => import('./government/PincodeLookup')),
-  'post-office-finder':   dynamic(() => import('./government/PostOfficeFinder')),
-  'ifsc-code-finder':     dynamic(() => import('./government/IFSCFinder')),
-  'mandi-price-checker':  dynamic(() => import('./government/MandiPriceChecker')),
+  'gstin-validator':      loadTool(() => import('./government/GSTINValidator')),
+  'pin-code-lookup':      loadTool(() => import('./government/PincodeLookup')),
+  'post-office-finder':   loadTool(() => import('./government/PostOfficeFinder')),
+  'ifsc-code-finder':     loadTool(() => import('./government/IFSCFinder')),
+  'mandi-price-checker':  loadTool(() => import('./government/MandiPriceChecker')),
 
   // Image Tools
-  'image-compressor':         dynamic(() => import('./image/ImageCompressor')),
-  'png-to-jpg':                dynamic(() => import('./image/PngToJpg')),
-  'jpg-to-png':                dynamic(() => import('./image/JpgToPng')),
-  'webp-converter':            dynamic(() => import('./image/WebpConverter')),
-  'image-resizer':             dynamic(() => import('./image/ImageResizer')),
-  'image-cropper':             dynamic(() => import('./image/ImageCropper')),
-  'remove-background':         dynamic(() => import('./image/RemoveBackground')),
-  'image-metadata-viewer':     dynamic(() => import('./image/ImageMetadataViewer')),
-  'remove-exif':               dynamic(() => import('./image/RemoveExif')),
-  'image-optimizer':           dynamic(() => import('./image/ImageOptimizer')),
+  'image-compressor':         loadTool(() => import('./image/ImageCompressor')),
+  'png-to-jpg':                loadTool(() => import('./image/PngToJpg')),
+  'jpg-to-png':                loadTool(() => import('./image/JpgToPng')),
+  'webp-converter':            loadTool(() => import('./image/WebpConverter')),
+  'image-resizer':             loadTool(() => import('./image/ImageResizer')),
+  'image-cropper':             loadTool(() => import('./image/ImageCropper')),
+  'remove-background':         loadTool(() => import('./image/RemoveBackground')),
+  'image-metadata-viewer':     loadTool(() => import('./image/ImageMetadataViewer')),
+  'remove-exif':               loadTool(() => import('./image/RemoveExif')),
+  'image-optimizer':           loadTool(() => import('./image/ImageOptimizer')),
 };
 
 // Tools that render their own card chrome and manage popovers/overflow

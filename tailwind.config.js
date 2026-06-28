@@ -92,8 +92,8 @@ module.exports = {
         shimmer: 'shimmer 1.5s infinite',
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
-        mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
+        sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
+        mono: ['var(--font-jetbrains-mono)', 'Fira Code', 'monospace'],
       },
     },
   },
