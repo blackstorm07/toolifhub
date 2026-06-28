@@ -16,6 +16,7 @@ import BlogPreview from '@/components/home/BlogPreview';
 // split out of the main bundle instead of shipping on the critical path.
 const Newsletter = dynamic(() => import('@/components/home/Newsletter'), { ssr: true });
 import HomepageContentAd from '@/components/ads/HomepageContentAd';
+import { Award, Flame, Sparkles } from 'lucide-react';
 import JsonLd, { buildOrganizationSchema, buildWebSiteSchema } from '@/components/seo/JsonLd';
 import { buildPageMetadata } from '@/lib/seo/metadata';
 import { SITE_NAME } from '@/lib/seo/constants';
@@ -104,13 +105,13 @@ export default async function HomePage() {
       <HomepageContentAd />
       <FeaturedCategories categories={categories} />
       {featuredTools.length > 0 && (
-        <ToolsSection title="Featured Tools" badge="Editor's Pick" tools={featuredTools} viewAllHref="/categories" />
+        <ToolsSection title="Featured Tools" badge="Editor's Pick" badgeIcon={Award} tools={featuredTools} viewAllHref="/categories" />
       )}
       {trendingTools.length > 0 && (
-        <ToolsSection title="Trending Now" badge="🔥 Hot" subtitle="Most used tools this week" tools={trendingTools} viewAllHref="/categories" />
+        <ToolsSection title="Trending Now" badge="Hot" badgeIcon={Flame} subtitle="Most used tools this week" tools={trendingTools} viewAllHref="/categories" />
       )}
       {recentTools.length > 0 && (
-        <ToolsSection title="Recently Added" badge="New" tools={recentTools} viewAllHref="/categories" />
+        <ToolsSection title="Recently Added" badge="New" badgeIcon={Sparkles} tools={recentTools} viewAllHref="/categories" />
       )}
       <BlogPreview blogs={blogs} />
       <Newsletter />

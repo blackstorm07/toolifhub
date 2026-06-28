@@ -9,7 +9,14 @@ export const metadata = buildPageMetadata({
   title: 'Disclaimer',
   description: `Read the disclaimer for ${SITE_NAME}, covering tool accuracy, professional advice, third-party links, and limitation of liability.`,
   path: '/disclaimer',
-  keywords: ['disclaimer', 'liability', 'terms', `${SITE_NAME.toLowerCase()} disclaimer`],
+  keywords: [
+    'disclaimer', 'liability', 'terms', `${SITE_NAME.toLowerCase()} disclaimer`,
+    'tool accuracy disclaimer', 'no professional advice disclaimer', 'third party links disclaimer',
+    'limitation of liability', 'are online tools accurate', 'use at your own risk',
+    'website disclaimer policy', 'legal disclaimer free tools', 'toolifhub liability',
+    'disclaimer for online calculators', 'general disclaimer notice', 'free tool accuracy notice',
+    'no warranty disclaimer', 'website legal notice', 'ToolifHub',
+  ],
 });
 
 function buildDisclaimerSchema() {

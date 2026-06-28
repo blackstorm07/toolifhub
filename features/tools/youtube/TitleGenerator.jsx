@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Sparkles, Copy, Check, RefreshCw } from 'lucide-react';
+import { Sparkles, Copy, Check, RefreshCw, Lightbulb } from 'lucide-react';
 import { copyToClipboard } from '@/lib/utils';
 import { trackToolUsage } from '@/lib/analytics';
 import toast from 'react-hot-toast';
@@ -82,7 +82,10 @@ export default function TitleGenerator() {
               </div>
             ))}
           </div>
-          <p className="text-xs text-muted-foreground">💡 Tip: Titles between 40–70 characters perform best for YouTube SEO.</p>
+          <p className="flex items-start gap-1.5 text-xs text-muted-foreground">
+            <Lightbulb className="w-3.5 h-3.5 text-amber-500 flex-shrink-0 mt-0.5" aria-hidden="true" />
+            Tip: Titles between 40–70 characters perform best for YouTube SEO.
+          </p>
         </div>
       )}
     </div>

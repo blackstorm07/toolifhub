@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { Trash2 } from 'lucide-react';
+import { Trash2, BarChart3, Type, Eraser, BookOpen, FileText, Timer } from 'lucide-react';
 import { trackToolUsage } from '@/lib/analytics';
 
 function analyzeText(text) {
@@ -29,20 +29,20 @@ export default function WordCounter() {
   };
 
   const statCards = [
-    { label: 'Words', value: stats.words, icon: '📝' },
-    { label: 'Characters', value: stats.chars, icon: '🔤' },
-    { label: 'Chars (no spaces)', value: stats.charsNoSpaces, icon: '✂️' },
-    { label: 'Sentences', value: stats.sentences, icon: '📖' },
-    { label: 'Paragraphs', value: stats.paragraphs, icon: '📄' },
-    { label: 'Reading Time', value: stats.readingTime ? `${stats.readingTime} min` : '< 1 min', icon: '⏱️' },
+    { label: 'Words', value: stats.words, icon: BarChart3 },
+    { label: 'Characters', value: stats.chars, icon: Type },
+    { label: 'Chars (no spaces)', value: stats.charsNoSpaces, icon: Eraser },
+    { label: 'Sentences', value: stats.sentences, icon: BookOpen },
+    { label: 'Paragraphs', value: stats.paragraphs, icon: FileText },
+    { label: 'Reading Time', value: stats.readingTime ? `${stats.readingTime} min` : '< 1 min', icon: Timer },
   ];
 
   return (
     <div className="space-y-5">
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-        {statCards.map(({ label, value, icon }) => (
+        {statCards.map(({ label, value, icon: Icon }) => (
           <div key={label} className="flex flex-col items-center p-4 bg-muted/30 rounded-2xl border border-border text-center">
-            <span className="text-2xl mb-1">{icon}</span>
+            <Icon className="w-6 h-6 mb-1 text-brand-500" aria-hidden="true" />
             <span className="text-xl font-bold">{value}</span>
             <span className="text-xs text-muted-foreground mt-0.5">{label}</span>
           </div>

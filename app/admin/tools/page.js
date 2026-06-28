@@ -1,9 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Plus, Pencil, Trash2, Search, Eye, CheckCircle, XCircle } from 'lucide-react';
+import { Plus, Pencil, Trash2, Search, Eye, CheckCircle, XCircle, Globe, MapPin } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { VISIBILITY_OPTIONS, DEFAULT_VISIBILITY } from '@/lib/visibility';
+import ToolIcon from '@/components/icons/ToolIcon';
 
 export default function AdminToolsPage() {
   const [tools, setTools] = useState([]);
@@ -137,7 +138,7 @@ export default function AdminToolsPage() {
                 <tr key={tool._id} className="hover:bg-muted/30 transition-colors">
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
-                      <span className="text-lg">{tool.icon}</span>
+                      <ToolIcon slug={tool.slug} className="w-5 h-5 text-brand-600 dark:text-brand-400 flex-shrink-0" />
                       <div>
                         <p className="font-medium">{tool.title}</p>
                         <p className="text-xs text-muted-foreground">{tool.slug}</p>
@@ -159,9 +160,13 @@ export default function AdminToolsPage() {
                   </td>
                   <td className="px-4 py-3 hidden lg:table-cell">
                     {tool.visibility === 'india_only' ? (
-                      <span className="text-xs bg-orange-50 text-orange-700 dark:bg-orange-900/20 dark:text-orange-400 px-2 py-1 rounded-full">🇮🇳 India Only</span>
+                      <span className="inline-flex items-center gap-1 text-xs bg-orange-50 text-orange-700 dark:bg-orange-900/20 dark:text-orange-400 px-2 py-1 rounded-full">
+                        <MapPin className="w-3 h-3" aria-hidden="true" /> India Only
+                      </span>
                     ) : (
-                      <span className="text-xs bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400 px-2 py-1 rounded-full">🌍 Worldwide</span>
+                      <span className="inline-flex items-center gap-1 text-xs bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400 px-2 py-1 rounded-full">
+                        <Globe className="w-3 h-3" aria-hidden="true" /> Worldwide
+                      </span>
                     )}
                   </td>
                   <td className="px-4 py-3 text-right">

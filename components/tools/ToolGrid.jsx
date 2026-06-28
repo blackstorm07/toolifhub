@@ -1,3 +1,4 @@
+import { Wrench } from 'lucide-react';
 import ToolCard from './ToolCard';
 
 export function ToolGridSkeleton({ count = 8 }) {
@@ -32,7 +33,7 @@ export default function ToolGrid({ tools = [], cols = 4, compact = false }) {
   if (!tools.length) {
     return (
       <div className="text-center py-12 text-muted-foreground">
-        <p className="text-4xl mb-4">🔧</p>
+        <Wrench className="w-10 h-10 mx-auto mb-4" aria-hidden="true" />
         <p className="font-medium">No tools found</p>
         <p className="text-sm mt-1">Check back soon — we add new tools regularly!</p>
       </div>

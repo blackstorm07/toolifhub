@@ -39,7 +39,7 @@ export default function RootLayout({ children }) {
         <GoogleTagManager />
         <AdSenseScript />
       </head>
-      <body className="min-h-screen bg-background font-sans antialiased">
+      <body className="min-h-screen bg-background font-sans antialiased" suppressHydrationWarning>
         <GoogleTagManagerNoScript />
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <GTMPageTracker />

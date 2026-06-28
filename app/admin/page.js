@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Wrench, FolderOpen, FileText, Users, Eye, TrendingUp, BarChart3, Zap } from 'lucide-react';
+import { Wrench, FolderOpen, FileText, Users, Eye, TrendingUp, BarChart3, Zap, Globe, Settings } from 'lucide-react';
 import Link from 'next/link';
+import ToolIcon from '@/components/icons/ToolIcon';
 
 function StatCard({ label, value, icon: Icon, href, color = 'brand' }) {
   const colorMap = {
@@ -77,7 +78,7 @@ export default function AdminDashboard() {
             {topTools.slice(0, 8).map((tool, i) => (
               <div key={tool._id} className="flex items-center gap-3">
                 <span className="text-xs font-bold text-muted-foreground w-4">#{i + 1}</span>
-                <span className="text-lg">{tool.icon}</span>
+                <ToolIcon slug={tool.slug} className="w-4 h-4 text-brand-600 dark:text-brand-400 flex-shrink-0" />
                 <span className="flex-1 text-sm font-medium truncate">{tool.title}</span>
                 <span className="text-xs text-muted-foreground flex items-center gap-1"><Eye className="w-3 h-3" />{tool.views?.toLocaleString()}</span>
               </div>
@@ -90,12 +91,12 @@ export default function AdminDashboard() {
           <h2 className="font-bold mb-6 flex items-center gap-2"><Zap className="w-4 h-4 text-brand-500" /> Quick Actions</h2>
           <div className="grid grid-cols-2 gap-3">
             {[
-              { label: 'Add Tool', href: '/admin/tools', icon: '🔧' },
-              { label: 'Add Category', href: '/admin/categories', icon: '📁' },
-              { label: 'Write Blog Post', href: '/admin/blogs', icon: '📝' },
-              { label: 'View Analytics', href: '/admin/analytics', icon: '📊' },
-              { label: 'View Site', href: '/', icon: '🌐' },
-              { label: 'Settings', href: '/admin/settings', icon: '⚙️' },
+              { label: 'Add Tool', href: '/admin/tools', icon: Wrench },
+              { label: 'Add Category', href: '/admin/categories', icon: FolderOpen },
+              { label: 'Write Blog Post', href: '/admin/blogs', icon: FileText },
+              { label: 'View Analytics', href: '/admin/analytics', icon: BarChart3 },
+              { label: 'View Site', href: '/', icon: Globe },
+              { label: 'Settings', href: '/admin/settings', icon: Settings },
             ].map((action) => (
               <Link
                 key={action.label}
@@ -103,7 +104,7 @@ export default function AdminDashboard() {
                 target={action.href === '/' ? '_blank' : undefined}
                 className="flex items-center gap-3 p-4 rounded-xl border border-border hover:border-brand-300 hover:bg-brand-50/50 dark:hover:bg-brand-900/10 transition-all group"
               >
-                <span className="text-xl">{action.icon}</span>
+                <action.icon className="w-5 h-5 text-muted-foreground group-hover:text-foreground" aria-hidden="true" />
                 <span className="text-sm font-medium text-muted-foreground group-hover:text-foreground">{action.label}</span>
               </Link>
             ))}

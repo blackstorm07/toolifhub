@@ -9,7 +9,14 @@ export const metadata = buildPageMetadata({
   title: 'Cookie Policy',
   description: `Learn how ${SITE_NAME} uses cookies and similar technologies, and how to manage your cookie preferences.`,
   path: '/cookie-policy',
-  keywords: ['cookie policy', 'cookies', 'tracking', `${SITE_NAME.toLowerCase()} cookies`],
+  keywords: [
+    'cookie policy', 'cookies', 'tracking', `${SITE_NAME.toLowerCase()} cookies`,
+    'what are cookies', 'how to manage cookies', 'website cookie usage', 'cookie preferences',
+    'disable cookies online tools', 'analytics cookies policy', 'third party cookies',
+    'browser cookies explained', 'cookie consent policy', 'toolifhub tracking policy',
+    'do you use cookies', 'cookie settings', 'manage cookie preferences', 'session cookies policy',
+    'website tracking technologies', 'ToolifHub',
+  ],
 });
 
 function buildCookiePolicySchema() {

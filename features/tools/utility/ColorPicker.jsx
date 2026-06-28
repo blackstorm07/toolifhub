@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import {
-  Copy, Check, Pipette, Shuffle, Star, Download, Sun, Moon,
+  Copy, Check, Pipette, Shuffle, Star, Download, Sun, Moon, CheckCircle2, XCircle,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { copyToClipboard } from '@/lib/utils';
@@ -722,9 +722,15 @@ function ContrastCard({ label, textColor, bg, ratio }) {
           <span className="font-mono font-semibold">{ratio}:1</span>
         </div>
         <div className="flex items-center gap-3 text-xs">
-          <span className={level.aa ? 'text-green-600' : 'text-red-500'}>{level.aa ? '✅' : '❌'} AA</span>
-          <span className={level.aaa ? 'text-green-600' : 'text-red-500'}>{level.aaa ? '✅' : '❌'} AAA</span>
-          <span className={levelLarge.aa ? 'text-green-600' : 'text-red-500'}>{levelLarge.aa ? '✅' : '❌'} AA Large</span>
+          <span className={`inline-flex items-center gap-1 ${level.aa ? 'text-green-600' : 'text-red-500'}`}>
+            {level.aa ? <CheckCircle2 className="w-3.5 h-3.5" aria-hidden="true" /> : <XCircle className="w-3.5 h-3.5" aria-hidden="true" />} AA
+          </span>
+          <span className={`inline-flex items-center gap-1 ${level.aaa ? 'text-green-600' : 'text-red-500'}`}>
+            {level.aaa ? <CheckCircle2 className="w-3.5 h-3.5" aria-hidden="true" /> : <XCircle className="w-3.5 h-3.5" aria-hidden="true" />} AAA
+          </span>
+          <span className={`inline-flex items-center gap-1 ${levelLarge.aa ? 'text-green-600' : 'text-red-500'}`}>
+            {levelLarge.aa ? <CheckCircle2 className="w-3.5 h-3.5" aria-hidden="true" /> : <XCircle className="w-3.5 h-3.5" aria-hidden="true" />} AA Large
+          </span>
         </div>
       </div>
     </div>

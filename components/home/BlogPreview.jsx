@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowRight, Calendar, Clock } from 'lucide-react';
+import { ArrowRight, Calendar, Clock, FileText } from 'lucide-react';
 import { getTimeAgo } from '@/lib/utils';
 
 function BlogCard({ blog }) {
@@ -22,7 +22,7 @@ function BlogCard({ blog }) {
         </div>
       ) : (
         <div className="aspect-video bg-gradient-to-br from-brand-100 to-purple-100 dark:from-brand-900/30 dark:to-purple-900/30 flex items-center justify-center">
-          <span className="text-4xl">📝</span>
+          <FileText className="w-10 h-10 text-brand-400" aria-hidden="true" />
         </div>
       )}
 

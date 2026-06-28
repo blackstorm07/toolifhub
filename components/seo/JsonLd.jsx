@@ -171,3 +171,17 @@ export function buildCollectionPageSchema({ name, description, url, items = [] }
     },
   };
 }
+
+/** Generic WebPage schema for static/utility pages that aren't an Article,
+ * SoftwareApplication, or CollectionPage (about, contact, legal pages, 404). */
+export function buildWebPageSchema({ name, description, url, breadcrumb }) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name,
+    description,
+    url,
+    isPartOf: { '@type': 'WebSite', name: SITE_NAME, url: SITE_URL },
+    ...(breadcrumb ? { breadcrumb } : {}),
+  };
+}

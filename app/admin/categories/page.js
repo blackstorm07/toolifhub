@@ -1,9 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Plus, Pencil, Trash2 } from 'lucide-react';
+import { Plus, Pencil, Trash2, Globe, MapPin } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { VISIBILITY_OPTIONS, DEFAULT_VISIBILITY } from '@/lib/visibility';
+import CategoryIcon from '@/components/icons/CategoryIcon';
 
 export default function AdminCategoriesPage() {
   const [categories, setCategories] = useState([]);
@@ -94,7 +95,7 @@ export default function AdminCategoriesPage() {
             <tbody className="divide-y divide-border">
               {categories.map((cat) => (
                 <tr key={cat._id} className="hover:bg-muted/30 transition-colors">
-                  <td className="px-4 py-3 flex items-center gap-3"><span className="text-xl">{cat.icon}</span><span className="font-medium">{cat.name}</span></td>
+                  <td className="px-4 py-3 flex items-center gap-3"><CategoryIcon slug={cat.slug} className="w-5 h-5 text-brand-600 dark:text-brand-400 flex-shrink-0" /><span className="font-medium">{cat.name}</span></td>
                   <td className="px-4 py-3 hidden md:table-cell text-muted-foreground">{cat.slug}</td>
                   <td className="px-4 py-3 hidden md:table-cell">{cat.featured ? <span className="text-xs bg-green-50 text-green-700 px-2 py-1 rounded-full">Yes</span> : '—'}</td>
                   <td className="px-4 py-3 hidden md:table-cell">
@@ -106,9 +107,13 @@ export default function AdminCategoriesPage() {
                   </td>
                   <td className="px-4 py-3 hidden md:table-cell">
                     {cat.visibility === 'india_only' ? (
-                      <span className="text-xs bg-orange-50 text-orange-700 dark:bg-orange-900/20 dark:text-orange-400 px-2 py-1 rounded-full">🇮🇳 India Only</span>
+                      <span className="inline-flex items-center gap-1 text-xs bg-orange-50 text-orange-700 dark:bg-orange-900/20 dark:text-orange-400 px-2 py-1 rounded-full">
+                        <MapPin className="w-3 h-3" aria-hidden="true" /> India Only
+                      </span>
                     ) : (
-                      <span className="text-xs bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400 px-2 py-1 rounded-full">🌍 Worldwide</span>
+                      <span className="inline-flex items-center gap-1 text-xs bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400 px-2 py-1 rounded-full">
+                        <Globe className="w-3 h-3" aria-hidden="true" /> Worldwide
+                      </span>
                     )}
                   </td>
                   <td className="px-4 py-3 text-right">

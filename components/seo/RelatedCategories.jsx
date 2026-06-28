@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { FolderOpen } from 'lucide-react';
+import CategoryIcon from '@/components/icons/CategoryIcon';
 
 export default function RelatedCategories({ categories = [] }) {
   if (!categories.length) return null;
@@ -17,7 +18,7 @@ export default function RelatedCategories({ categories = [] }) {
             href={`/category/${cat.slug}`}
             className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border hover:border-brand-300 dark:hover:border-brand-700 hover:bg-muted/50 transition-all text-sm font-medium"
           >
-            {cat.icon && <span>{cat.icon}</span>}
+            <CategoryIcon slug={cat.slug} className="w-4 h-4" />
             {cat.name}
           </Link>
         ))}

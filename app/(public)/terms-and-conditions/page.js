@@ -13,11 +13,12 @@ export const metadata = buildPageMetadata({
   description: `Read the Terms & Conditions for using ${SITE_NAME}. Understand your rights, responsibilities, and our service policies for our free online tools platform.`,
   path: '/terms-and-conditions',
   keywords: [
-    'terms and conditions',
-    'terms of service',
-    'user agreement',
-    'acceptable use',
-    `${SITE_NAME.toLowerCase()} terms`,
+    'terms and conditions', 'terms of service', 'user agreement', 'acceptable use',
+    `${SITE_NAME.toLowerCase()} terms`, 'website terms of use', 'legal agreement online tools',
+    'rules for using toolifhub', 'service terms', 'user responsibilities',
+    'terms of use free tools', 'online tool usage policy', 'toolifhub legal terms',
+    'what are the terms of service', 'free tools user agreement', 'limitation of liability',
+    'intellectual property terms', 'how to use toolifhub legally', 'ToolifHub',
   ],
 });
 

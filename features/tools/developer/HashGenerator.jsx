@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Copy, Check } from 'lucide-react';
+import { Copy, Check, Lock } from 'lucide-react';
 import { copyToClipboard } from '@/lib/utils';
 import { trackToolUsage } from '@/lib/analytics';
 import toast from 'react-hot-toast';
@@ -65,7 +65,7 @@ export default function HashGenerator() {
 
       <button onClick={generate} disabled={loading}
         className="flex items-center gap-2 px-6 py-2.5 bg-brand-500 hover:bg-brand-600 text-white font-semibold rounded-xl transition-colors disabled:opacity-70">
-        {loading ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : '🔐'}
+        {loading ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <Lock className="w-4 h-4" aria-hidden="true" />}
         Generate Hashes
       </button>
 

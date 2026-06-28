@@ -3,9 +3,11 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { useRouter } from 'next/navigation';
-import { Search, X, ArrowRight, Tag } from 'lucide-react';
+import { Search, X, ArrowRight, ArrowUp, ArrowDown, Tag } from 'lucide-react';
 import { trackSearch } from '@/lib/analytics';
 import { useIsClient } from '@/hooks/useIsClient';
+import CategoryIcon from '@/components/icons/CategoryIcon';
+import ToolIcon from '@/components/icons/ToolIcon';
 
 function useDebounce(value, delay) {
   const [debouncedValue, setDebouncedValue] = useState(value);
@@ -172,7 +174,7 @@ export default function SearchModal({ open, onClose }) {
                   onClick={() => handleSelect({ ...cat, type: 'category' })}
                   className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-colors ${activeIndex === i ? 'bg-brand-50 dark:bg-brand-900/20' : 'hover:bg-muted'}`}
                 >
-                  <span className="text-xl">{cat.icon}</span>
+                  <CategoryIcon slug={cat.slug} className="w-5 h-5 text-brand-600 dark:text-brand-400 flex-shrink-0" />
                   <div className="flex-1 min-w-0">
                     <p className="font-medium text-sm">{cat.name}</p>
                   </div>
@@ -193,7 +195,7 @@ export default function SearchModal({ open, onClose }) {
                     onClick={() => handleSelect({ ...tool, type: 'tool' })}
                     className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-colors ${activeIndex === idx ? 'bg-brand-50 dark:bg-brand-900/20' : 'hover:bg-muted'}`}
                   >
-                    <span className="text-xl">{tool.icon}</span>
+                    <ToolIcon slug={tool.slug} className="w-5 h-5 text-brand-600 dark:text-brand-400 flex-shrink-0" />
                     <div className="flex-1 min-w-0">
                       <p className="font-medium text-sm">{tool.title}</p>
                       <p className="text-xs text-muted-foreground truncate">{tool.shortDescription}</p>
@@ -208,7 +210,11 @@ export default function SearchModal({ open, onClose }) {
 
         {/* Footer */}
         <div className="flex items-center gap-4 px-4 py-3 border-t border-border bg-muted/30 text-xs text-muted-foreground">
-          <span className="flex items-center gap-1"><kbd className="font-mono bg-background border border-border rounded px-1">↑↓</kbd> Navigate</span>
+          <span className="flex items-center gap-1">
+            <kbd className="font-mono bg-background border border-border rounded px-1 inline-flex items-center"><ArrowUp className="w-3 h-3" aria-hidden="true" /></kbd>
+            <kbd className="font-mono bg-background border border-border rounded px-1 inline-flex items-center"><ArrowDown className="w-3 h-3" aria-hidden="true" /></kbd>
+            Navigate
+          </span>
           <span className="flex items-center gap-1"><kbd className="font-mono bg-background border border-border rounded px-1">Enter</kbd> Select</span>
           <span className="flex items-center gap-1"><kbd className="font-mono bg-background border border-border rounded px-1">Esc</kbd> Close</span>
         </div>

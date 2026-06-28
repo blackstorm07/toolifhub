@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { BarChart3, TrendingUp, Eye, Activity } from 'lucide-react';
+import { BarChart3, TrendingUp, Eye, Activity, CheckCircle2, AlertTriangle } from 'lucide-react';
+import ToolIcon from '@/components/icons/ToolIcon';
 
 export default function AdminAnalyticsPage() {
   const [data, setData] = useState(null);
@@ -50,7 +51,7 @@ export default function AdminAnalyticsPage() {
             {topTools.map((tool, i) => (
               <div key={tool._id} className="flex items-center gap-4">
                 <span className="text-sm font-bold text-muted-foreground w-6 flex-shrink-0">#{i + 1}</span>
-                <span className="text-lg flex-shrink-0">{tool.icon}</span>
+                <ToolIcon slug={tool.slug} className="w-5 h-5 text-brand-600 dark:text-brand-400 flex-shrink-0" />
                 <span className="flex-1 text-sm font-medium truncate">{tool.title}</span>
                 <div className="flex items-center gap-2">
                   <div className="hidden sm:block w-32 h-2 bg-muted rounded-full overflow-hidden">
@@ -69,10 +70,14 @@ export default function AdminAnalyticsPage() {
 
       <div className="bg-card border border-border rounded-2xl p-6">
         <h2 className="font-bold mb-4">Google Tag Manager</h2>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-muted-foreground flex items-start gap-2">
           {process.env.NEXT_PUBLIC_GTM_ID
-            ? `✅ Google Tag Manager is connected (ID: ${process.env.NEXT_PUBLIC_GTM_ID}). Configure GA4 and other tags in your `
-            : '⚠️ Google Tag Manager is not configured. Set NEXT_PUBLIC_GTM_ID in .env.local (local) and in Vercel → Project → Settings → Environment Variables (Production + Preview), then redeploy.'}
+            ? <CheckCircle2 className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" aria-hidden="true" />
+            : <AlertTriangle className="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" aria-hidden="true" />}
+          <span>
+          {process.env.NEXT_PUBLIC_GTM_ID
+            ? `Google Tag Manager is connected (ID: ${process.env.NEXT_PUBLIC_GTM_ID}). Configure GA4 and other tags in your `
+            : 'Google Tag Manager is not configured. Set NEXT_PUBLIC_GTM_ID in .env.local (local) and in Vercel → Project → Settings → Environment Variables (Production + Preview), then redeploy.'}
           {process.env.NEXT_PUBLIC_GTM_ID && (
             <a href="https://tagmanager.google.com" target="_blank" rel="noopener noreferrer" className="text-brand-500 hover:underline">GTM dashboard</a>
           )}
@@ -81,6 +86,7 @@ export default function AdminAnalyticsPage() {
             <a href="https://analytics.google.com" target="_blank" rel="noopener noreferrer" className="text-brand-500 hover:underline">Google Analytics</a>
           )}
           {process.env.NEXT_PUBLIC_GTM_ID && ' once a GA4 Configuration tag is published in GTM.'}
+          </span>
         </p>
       </div>
     </div>

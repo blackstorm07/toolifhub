@@ -12,11 +12,12 @@ export const metadata = buildPageMetadata({
   description: `Learn how ${SITE_NAME} collects, uses, and protects your information. Transparent privacy practices for our free online tools platform.`,
   path: '/privacy-policy',
   keywords: [
-    'privacy policy',
-    'data protection',
-    'cookie policy',
-    'user privacy',
-    `${SITE_NAME.toLowerCase()} privacy`,
+    'privacy policy', 'data protection', 'cookie policy', 'user privacy',
+    `${SITE_NAME.toLowerCase()} privacy`, 'how is my data used', 'data collection policy',
+    'is toolifhub safe', 'gdpr compliance', 'personal data protection', 'browser based privacy',
+    'no data storage tools', 'online privacy policy', 'website privacy practices',
+    'data security policy', 'user data rights', 'privacy first online tools',
+    'toolifhub data policy', 'free tools privacy', 'ToolifHub',
   ],
 });
 

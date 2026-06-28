@@ -1,9 +1,10 @@
 import connectDB from '@/lib/mongodb';
 import Blog from '@/models/Blog';
 import Link from 'next/link';
-import { ArrowRight, Calendar, Clock } from 'lucide-react';
+import { ArrowRight, Calendar, Clock, FileText } from 'lucide-react';
 import OptimizedImage from '@/components/seo/OptimizedImage';
-import { buildPageMetadata } from '@/lib/seo/metadata';
+import { buildPageMetadata, buildCanonical } from '@/lib/seo/metadata';
+import JsonLd, { buildWebPageSchema, buildBreadcrumbSchema } from '@/components/seo/JsonLd';
 import { calculateReadingTime, formatReadingTime } from '@/lib/seo/readingTime';
 import { format } from 'date-fns';
 
@@ -11,7 +12,13 @@ export const metadata = buildPageMetadata({
   title: 'Blog — Tips, Tutorials & Tools',
   description: 'Read our latest articles on productivity, SEO, YouTube growth, AI tools, and online utilities.',
   path: '/blog',
-  keywords: ['blog', 'seo tips', 'youtube growth', 'productivity', 'ai tools'],
+  keywords: [
+    'blog', 'seo tips', 'youtube growth', 'productivity', 'ai tools', 'toolifhub blog',
+    'free online tools blog', 'developer tutorials', 'seo guides', 'youtube optimization tips',
+    'ai writing tips', 'productivity hacks', 'how to use online tools', 'tool tutorials',
+    'digital marketing tips', 'content creation tips', 'tech blog free tools',
+    'online tools guide', 'best free tools blog', 'ToolifHub',
+  ],
 });
 
 async function getBlogs() {
@@ -30,6 +37,17 @@ export default async function BlogPage() {
   const blogs = await getBlogs();
 
   return (
+    <>
+    <JsonLd
+      data={[
+        buildWebPageSchema({
+          name: 'Blog — Tips, Tutorials & Tools',
+          description: 'Read our latest articles on productivity, SEO, YouTube growth, AI tools, and online utilities.',
+          url: buildCanonical('/blog'),
+        }),
+        buildBreadcrumbSchema([{ label: 'Blog', href: '/blog' }]),
+      ]}
+    />
     <div className="page">
       <div className="mb-6">
         <p className="text-sm font-semibold text-brand-500 uppercase tracking-wider mb-2">Tips & Tutorials</p>
@@ -39,7 +57,7 @@ export default async function BlogPage() {
 
       {blogs.length === 0 ? (
         <div className="text-center py-16 text-muted-foreground">
-          <p className="text-4xl mb-4">📝</p>
+          <FileText className="w-10 h-10 mx-auto mb-4" aria-hidden="true" />
           <p className="font-medium text-lg">No posts yet</p>
           <p className="text-sm mt-2">Check back soon — great content is coming!</p>
         </div>
@@ -65,7 +83,7 @@ export default async function BlogPage() {
                   </div>
                 ) : (
                   <div className="aspect-video bg-gradient-to-br from-brand-100 to-purple-100 dark:from-brand-900/30 dark:to-purple-900/30 flex items-center justify-center">
-                    <span className="text-4xl">📝</span>
+                    <FileText className="w-10 h-10 text-brand-400" aria-hidden="true" />
                   </div>
                 )}
 
@@ -103,5 +121,6 @@ export default async function BlogPage() {
         </div>
       )}
     </div>
+    </>
   );
 }

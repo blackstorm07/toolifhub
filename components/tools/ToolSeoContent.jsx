@@ -1,3 +1,4 @@
+import { CheckCircle2 } from 'lucide-react';
 import ToolFAQ from '@/components/tools/ToolFAQ';
 import { generateToolSeoContent } from '@/lib/seo/toolContent';
 import Link from 'next/link';
@@ -27,7 +28,7 @@ export default function ToolSeoContent({ tool, categoryName }) {
         <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {content.features.map((feature, i) => (
             <li key={i} className="flex items-start gap-3 p-4 rounded-xl border border-border bg-card">
-              <span className="text-brand-500 font-bold flex-shrink-0">✓</span>
+              <CheckCircle2 className="w-5 h-5 text-brand-500 flex-shrink-0" aria-hidden="true" />
               <span className="text-sm text-muted-foreground">{feature}</span>
             </li>
           ))}

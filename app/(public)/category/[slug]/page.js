@@ -7,6 +7,7 @@ import { getCategorySeoContent } from '@/lib/seo/categoryContent';
 import { getRequestCountry } from '@/lib/geo';
 import { visibilityMongoFilter, isIndiaUser } from '@/lib/visibility';
 import ToolGrid from '@/components/tools/ToolGrid';
+import CategoryIcon from '@/components/icons/CategoryIcon';
 import Breadcrumb from '@/components/tools/Breadcrumb';
 import CategorySeoContent from '@/components/category/CategorySeoContent';
 import CategoryBannerAd from '@/components/ads/CategoryBannerAd';
@@ -90,7 +91,9 @@ export default async function CategoryPage({ params }) {
       <div className="page">
         <Breadcrumb items={[{ label: 'Categories', href: '/categories' }, { label: data.category.name }]} />
         <div className="mt-10 text-center max-w-md mx-auto py-12">
-          <div className="text-5xl mb-4">{data.category.icon}</div>
+          <div className="flex items-center justify-center text-brand-600 dark:text-brand-400 mb-4">
+            <CategoryIcon slug={data.category.slug} className="w-12 h-12" />
+          </div>
           <h1 className="text-2xl font-bold mb-2">{data.category.name} isn&apos;t available in your region</h1>
           <p className="text-muted-foreground">This category is only available to visitors in India.</p>
         </div>
@@ -132,8 +135,8 @@ export default async function CategoryPage({ params }) {
 
         <div className="mt-6 mb-6">
           <div className="flex items-center gap-4 mb-4">
-            <div className="w-14 h-14 rounded-2xl bg-brand-50 dark:bg-brand-900/30 flex items-center justify-center text-3xl">
-              {category.icon}
+            <div className="w-14 h-14 rounded-2xl bg-brand-50 dark:bg-brand-900/30 flex items-center justify-center text-brand-600 dark:text-brand-400">
+              <CategoryIcon slug={category.slug} className="w-7 h-7" />
             </div>
             <div>
               <h1 className="text-3xl lg:text-4xl font-bold">{category.name}</h1>

@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
+import CategoryIcon from '@/components/icons/CategoryIcon';
 
 export default function FeaturedCategories({ categories = [] }) {
   return (
@@ -22,8 +23,8 @@ export default function FeaturedCategories({ categories = [] }) {
               href={`/category/${cat.slug}`}
               className="group flex flex-col items-center gap-3 p-5 rounded-2xl border border-border hover:border-brand-300 dark:hover:border-brand-700 hover:shadow-md hover:bg-brand-50/50 dark:hover:bg-brand-900/10 transition-all text-center"
             >
-              <div className="w-12 h-12 rounded-2xl bg-brand-50 dark:bg-brand-900/30 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
-                {cat.icon}
+              <div className="w-12 h-12 rounded-2xl bg-brand-50 dark:bg-brand-900/30 flex items-center justify-center text-brand-600 dark:text-brand-400 group-hover:scale-110 transition-transform">
+                <CategoryIcon slug={cat.slug} className="w-6 h-6" />
               </div>
               <div>
                 <p className="font-semibold text-sm leading-tight group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">

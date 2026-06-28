@@ -11,6 +11,8 @@ import JsonLd, { buildBreadcrumbSchema, buildCollectionPageSchema, buildFaqSchem
 import { buildPageMetadata, buildCanonical } from '@/lib/seo/metadata';
 import { getRequestCountry } from '@/lib/geo';
 import { canViewCategory, visibilityMongoFilter } from '@/lib/visibility';
+import { generateCategoryKeywords } from '@/lib/seo/keywords';
+import { getCategoryKeywordOverride, mergeKeywords } from '@/lib/seo/keywordStrategy';
 
 async function getLandingData(categorySlug, country) {
   await connectDB();
@@ -28,11 +30,16 @@ export async function generateBestOfMetadata(routeSlug) {
   if (!categorySlug) return {};
   const seoContent = getCategorySeoContent(categorySlug);
   if (!seoContent) return {};
+  const categoryName = categorySlug.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+  const keywords = mergeKeywords(
+    [`best ${categoryName.toLowerCase()}`, ...getCategoryKeywordOverride(categorySlug)],
+    generateCategoryKeywords({ name: categoryName, description: seoContent.intro })
+  );
   return buildPageMetadata({
     title: seoContent.seoTitle,
     description: seoContent.seoDescription,
     path: `/${routeSlug}`,
-    keywords: [categorySlug.replace('-', ' '), 'best tools', 'free tools', 'toolifhub'],
+    keywords,
     absoluteTitle: true,
   });
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Hash, Copy, Check } from 'lucide-react';
+import { Hash, Copy, Check, Lightbulb } from 'lucide-react';
 import { copyToClipboard } from '@/lib/utils';
 import { trackToolUsage } from '@/lib/analytics';
 import toast from 'react-hot-toast';
@@ -71,7 +71,10 @@ export default function HashtagGenerator() {
             <p className="text-xs font-medium text-muted-foreground mb-2">Copy-paste format:</p>
             <p className="text-sm font-mono break-all">{hashtags.join(' ')}</p>
           </div>
-          <p className="text-xs text-muted-foreground">💡 YouTube recommends using 3–5 hashtags. Too many hashtags can mark your video as spam.</p>
+          <p className="flex items-start gap-1.5 text-xs text-muted-foreground">
+            <Lightbulb className="w-3.5 h-3.5 text-amber-500 flex-shrink-0 mt-0.5" aria-hidden="true" />
+            YouTube recommends using 3–5 hashtags. Too many hashtags can mark your video as spam.
+          </p>
         </div>
       )}
     </div>

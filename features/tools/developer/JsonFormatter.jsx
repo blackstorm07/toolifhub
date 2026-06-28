@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Copy, Check, Trash2, Minimize2, Maximize2 } from 'lucide-react';
+import { Copy, Check, Trash2, Minimize2, Maximize2, XCircle } from 'lucide-react';
 import { copyToClipboard } from '@/lib/utils';
 import { trackToolUsage } from '@/lib/analytics';
 import toast from 'react-hot-toast';
@@ -46,10 +46,10 @@ export default function JsonFormatter() {
     setError('');
     try {
       JSON.parse(input);
-      toast.success('✅ Valid JSON!');
+      toast.success('Valid JSON!');
     } catch (e) {
       setError(e.message);
-      toast.error('❌ Invalid JSON');
+      toast.error('Invalid JSON');
     }
   };
 
@@ -104,7 +104,9 @@ export default function JsonFormatter() {
           </div>
           {error ? (
             <div className="h-full min-h-[300px] p-4 rounded-xl border border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-900/10 font-mono text-sm text-red-600 dark:text-red-400">
-              <p className="font-bold mb-1">❌ JSON Error:</p>
+              <p className="flex items-center gap-1.5 font-bold mb-1">
+                <XCircle className="w-4 h-4" aria-hidden="true" /> JSON Error:
+              </p>
               <p>{error}</p>
             </div>
           ) : (

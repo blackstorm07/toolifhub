@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Copy, Check } from 'lucide-react';
+import { Copy, Check, AlertTriangle } from 'lucide-react';
 import { copyToClipboard } from '@/lib/utils';
 import { trackToolUsage } from '@/lib/analytics';
 import toast from 'react-hot-toast';
@@ -34,8 +34,9 @@ export default function JsMinifier() {
 
   return (
     <div className="space-y-4">
-      <p className="text-sm text-muted-foreground bg-yellow-50 dark:bg-yellow-900/10 border border-yellow-200 dark:border-yellow-900 rounded-xl px-4 py-3">
-        ⚠️ This is a basic minifier. For production use, integrate a proper tool like Terser or esbuild.
+      <p className="flex items-start gap-2 text-sm text-muted-foreground bg-yellow-50 dark:bg-yellow-900/10 border border-yellow-200 dark:border-yellow-900 rounded-xl px-4 py-3">
+        <AlertTriangle className="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" aria-hidden="true" />
+        This is a basic minifier. For production use, integrate a proper tool like Terser or esbuild.
       </p>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div><label className="block text-sm font-medium mb-2">Input JavaScript</label>

@@ -1,6 +1,8 @@
 'use client';
 
 import dynamic from 'next/dynamic';
+import { Wrench } from 'lucide-react';
+import ToolIcon from '@/components/icons/ToolIcon';
 
 // Reserves the tool UI's typical height while its chunk loads, so the
 // component popping in doesn't shift surrounding layout (CLS).
@@ -115,7 +117,9 @@ const NO_CHROME_TOOLS = new Set(['mandi-price-checker']);
 function ComingSoon({ tool }) {
   return (
     <div className="rounded-2xl border border-dashed border-border p-12 text-center bg-muted/20">
-      <div className="text-5xl mb-4">{tool?.icon || '🔧'}</div>
+      <div className="flex items-center justify-center text-muted-foreground mb-4">
+        {tool?.slug ? <ToolIcon slug={tool.slug} className="w-12 h-12" /> : <Wrench className="w-12 h-12" aria-hidden="true" />}
+      </div>
       <h2 className="text-xl font-bold mb-2">Tool Interface</h2>
       <p className="text-muted-foreground max-w-md mx-auto">
         This tool&apos;s interactive interface is launching soon. The tool is seeded and ready — add the frontend component in <code className="font-mono text-xs bg-muted px-1.5 py-0.5 rounded">features/tools/</code>.

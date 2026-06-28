@@ -1,6 +1,7 @@
 import Link from 'next/link';
-import { ArrowRight, TrendingUp } from 'lucide-react';
+import { ArrowRight, TrendingUp, Star } from 'lucide-react';
 import { formatNumber } from '@/lib/utils';
+import ToolIcon from '@/components/icons/ToolIcon';
 
 export default function ToolCard({ tool, compact = false }) {
   if (!tool) return null;
@@ -12,8 +13,8 @@ export default function ToolCard({ tool, compact = false }) {
     >
       <div className="flex items-start justify-between gap-2">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-brand-50 dark:bg-brand-900/30 flex items-center justify-center text-xl flex-shrink-0">
-            {tool.icon}
+          <div className="w-10 h-10 rounded-xl bg-brand-50 dark:bg-brand-900/30 flex items-center justify-center text-brand-600 dark:text-brand-400 flex-shrink-0">
+            <ToolIcon slug={tool.slug} className="w-5 h-5" />
           </div>
           <div className="min-w-0">
             <h3 className="font-semibold text-sm leading-tight group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors line-clamp-1">
@@ -41,7 +42,10 @@ export default function ToolCard({ tool, compact = false }) {
           </span>
         )}
         {tool.featured && (
-          <span className="text-xs text-brand-500 font-medium">⭐ Featured</span>
+          <span className="flex items-center gap-1 text-xs text-brand-500 font-medium">
+            <Star className="w-3 h-3" aria-hidden="true" />
+            Featured
+          </span>
         )}
         {tool.views > 0 && (
           <span className="ml-auto text-xs text-muted-foreground">

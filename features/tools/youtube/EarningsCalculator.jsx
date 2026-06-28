@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { DollarSign, TrendingUp } from 'lucide-react';
+import { DollarSign, TrendingUp, AlertTriangle } from 'lucide-react';
 import { trackToolUsage } from '@/lib/analytics';
 
 const CPM_RANGES = {
@@ -96,7 +96,10 @@ export default function EarningsCalculator() {
               <span>Niche CPM Range:</span><span className="font-medium text-foreground">${result.nicheRange.min}–${result.nicheRange.max}</span>
             </div>
           </div>
-          <p className="text-xs text-muted-foreground">⚠️ Estimates are approximations. Actual earnings depend on audience location, ad formats, engagement, and advertiser demand.</p>
+          <p className="flex items-start gap-1.5 text-xs text-muted-foreground">
+            <AlertTriangle className="w-3.5 h-3.5 text-amber-500 flex-shrink-0 mt-0.5" aria-hidden="true" />
+            Estimates are approximations. Actual earnings depend on audience location, ad formats, engagement, and advertiser demand.
+          </p>
         </div>
       )}
     </div>

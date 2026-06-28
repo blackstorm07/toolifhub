@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { Search, Building2, Phone } from 'lucide-react';
+import { Search, Building2, Phone, Check, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { trackToolUsage } from '@/lib/analytics';
 
@@ -91,9 +91,9 @@ export default function IFSCFinder() {
             {features.map((f) => (
               <span
                 key={f.label}
-                className={`text-xs font-medium px-2.5 py-1 rounded-full ${f.enabled ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' : 'bg-muted text-muted-foreground'}`}
+                className={`inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full ${f.enabled ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' : 'bg-muted text-muted-foreground'}`}
               >
-                {f.label} {f.enabled ? '✓' : '✗'}
+                {f.label} {f.enabled ? <Check className="w-3 h-3" aria-hidden="true" /> : <X className="w-3 h-3" aria-hidden="true" />}
               </span>
             ))}
           </div>
