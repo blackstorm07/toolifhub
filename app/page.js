@@ -1,9 +1,10 @@
+import { unstable_cache } from 'next/cache';
 import connectDB from '@/lib/mongodb';
 import Tool from '@/models/Tool';
 import Blog from '@/models/Blog';
 import { getVisibleCategoriesWithCounts } from '@/lib/categories';
 import { getRequestCountry } from '@/lib/geo';
-import { canViewTool, visibilityMongoFilter } from '@/lib/visibility';
+import { canViewTool, visibilityMongoFilter, isIndiaUser } from '@/lib/visibility';
 import Hero from '@/components/home/Hero';
 import FeaturedCategories from '@/components/home/FeaturedCategories';
 import ToolsSection from '@/components/home/ToolsSection';
@@ -25,7 +26,19 @@ export const metadata = buildPageMetadata({
   absoluteTitle: true,
 });
 
-async function getData(country) {
+// Only two visibility buckets exist (India vs everyone else — see
+// lib/visibility.js), so the expensive DB reads are cached per-bucket
+// instead of per-request. This removes the Mongo round trip from the
+// critical path on cache hits, which is the dominant factor in TTFB/LCP
+// since every page previously called headers() (via getRequestCountry)
+// and re-queried on every single request.
+const getCachedHomeData = unstable_cache(
+  async (bucket) => fetchHomeData(bucket),
+  ['home-data'],
+  { revalidate: 120, tags: ['home'] }
+);
+
+async function fetchHomeData(country) {
   try {
     await connectDB();
     const countryFilter = visibilityMongoFilter(country);
@@ -75,7 +88,8 @@ async function getData(country) {
 
 export default async function HomePage() {
   const country = await getRequestCountry();
-  const { categories, featuredTools, trendingTools, recentTools, blogs } = await getData(country);
+  const bucket = isIndiaUser(country) ? 'IN' : 'WORLD';
+  const { categories, featuredTools, trendingTools, recentTools, blogs } = await getCachedHomeData(bucket);
 
   return (
     <>

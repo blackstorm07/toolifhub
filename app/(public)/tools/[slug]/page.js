@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation';
+import { unstable_cache } from 'next/cache';
 import connectDB from '@/lib/mongodb';
 import Tool from '@/models/Tool';
 import Breadcrumb from '@/components/tools/Breadcrumb';
@@ -24,7 +25,7 @@ import { generateToolKeywords } from '@/lib/seo/keywords';
 import { getToolKeywordOverride, mergeKeywords } from '@/lib/seo/keywordStrategy';
 import { getRelatedBlogsForTool } from '@/lib/seo/internalLinks';
 import { getRequestCountry } from '@/lib/geo';
-import { canViewTool, visibilityMongoFilter } from '@/lib/visibility';
+import { canViewTool, visibilityMongoFilter, isIndiaUser } from '@/lib/visibility';
 import { serializeDoc } from '@/lib/serialize';
 
 export async function generateMetadata({ params }) {
@@ -61,7 +62,17 @@ export async function generateMetadata({ params }) {
   }
 }
 
-async function getData(slug, country) {
+// Cached per visibility bucket (IN vs everyone else — only two buckets
+// exist, see lib/visibility.js) so the Mongo round trip is off the critical
+// path on cache hits. The view-increment write is intentionally kept out of
+// this cached function (see getData below) so it still fires every request.
+const getCachedToolData = unstable_cache(
+  async (slug, bucket) => fetchToolData(slug, bucket),
+  ['tool-data'],
+  { revalidate: 120, tags: ['tools'] }
+);
+
+async function fetchToolData(slug, country) {
   await connectDB();
   let tool = await Tool.findOne({ slug, status: 'active' })
     .populate('category', 'name slug icon visibility')
@@ -72,8 +83,6 @@ async function getData(slug, country) {
   if (!canViewTool(tool, tool.category, country)) {
     return { status: 'geo-blocked', tool };
   }
-
-  Tool.findByIdAndUpdate(tool._id, { $inc: { views: 1 } }).exec();
 
   const countryFilter = visibilityMongoFilter(country);
   let relatedTools = [];
@@ -106,9 +115,15 @@ async function getData(slug, country) {
 export default async function ToolPage({ params }) {
   const { slug } = await params;
   const country = await getRequestCountry();
-  const data = await getData(slug, country);
+  const bucket = isIndiaUser(country) ? 'IN' : 'WORLD';
+  const data = await getCachedToolData(slug, bucket);
 
   if (data.status === 'not-found') notFound();
+
+  if (data.status === 'ok') {
+    await connectDB();
+    Tool.findByIdAndUpdate(data.tool._id, { $inc: { views: 1 } }).exec();
+  }
 
   if (data.status === 'geo-blocked') {
     return (

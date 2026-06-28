@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowRight, Calendar, Clock } from 'lucide-react';
 import { getTimeAgo } from '@/lib/utils';
 
@@ -9,11 +10,14 @@ function BlogCard({ blog }) {
       className="group flex flex-col bg-card border border-border rounded-2xl overflow-hidden hover:border-brand-300 dark:hover:border-brand-700 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200"
     >
       {blog.featuredImage ? (
-        <div className="aspect-video overflow-hidden bg-muted">
-          <img
+        <div className="relative aspect-video overflow-hidden bg-muted">
+          <Image
             src={blog.featuredImage}
             alt={blog.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            fill
+            loading="lazy"
+            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            className="object-cover group-hover:scale-105 transition-transform duration-300"
           />
         </div>
       ) : (

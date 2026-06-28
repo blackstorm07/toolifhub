@@ -1,10 +1,11 @@
 import { notFound } from 'next/navigation';
+import { unstable_cache } from 'next/cache';
 import connectDB from '@/lib/mongodb';
 import Tool from '@/models/Tool';
 import { getCategoryVisibilityStatus, getVisibleCategorySlugs } from '@/lib/categories';
 import { getCategorySeoContent } from '@/lib/seo/categoryContent';
 import { getRequestCountry } from '@/lib/geo';
-import { visibilityMongoFilter } from '@/lib/visibility';
+import { visibilityMongoFilter, isIndiaUser } from '@/lib/visibility';
 import ToolGrid from '@/components/tools/ToolGrid';
 import Breadcrumb from '@/components/tools/Breadcrumb';
 import CategorySeoContent from '@/components/category/CategorySeoContent';
@@ -55,6 +56,15 @@ export async function generateStaticParams() {
   }
 }
 
+// Cached per visibility bucket (IN vs everyone else — only two buckets
+// exist, see lib/visibility.js) to remove the Mongo round trip from the
+// critical path on cache hits.
+const getCachedCategoryData = unstable_cache(
+  async (slug, bucket) => getData(slug, bucket),
+  ['category-data'],
+  { revalidate: 120, tags: ['categories'] }
+);
+
 async function getData(slug, country) {
   await connectDB();
   const status = await getCategoryVisibilityStatus(slug, country);
@@ -70,7 +80,8 @@ async function getData(slug, country) {
 export default async function CategoryPage({ params }) {
   const { slug } = await params;
   const country = await getRequestCountry();
-  const data = await getData(slug, country);
+  const bucket = isIndiaUser(country) ? 'IN' : 'WORLD';
+  const data = await getCachedCategoryData(slug, bucket);
 
   if (data.status === 'not-found') notFound();
 

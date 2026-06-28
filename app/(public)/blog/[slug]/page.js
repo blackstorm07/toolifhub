@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation';
+import { unstable_cache } from 'next/cache';
 import connectDB from '@/lib/mongodb';
 import Blog from '@/models/Blog';
 import RelatedBlogs from '@/components/seo/RelatedBlogs';
@@ -15,6 +16,7 @@ import { BLOG_KEYWORD_POOL, mergeKeywords } from '@/lib/seo/keywordStrategy';
 import { calculateReadingTime } from '@/lib/seo/readingTime';
 import { getRelatedBlogsForBlog, getRelatedToolsForBlog } from '@/lib/seo/internalLinks';
 import { getRequestCountry } from '@/lib/geo';
+import { isIndiaUser } from '@/lib/visibility';
 import ReadingProgress from '@/components/blog/ReadingProgress';
 import ArticleHero from '@/components/blog/ArticleHero';
 import ArticleWithToc from '@/components/blog/ArticleWithToc';
@@ -61,11 +63,21 @@ export async function generateMetadata({ params }) {
   }
 }
 
-async function getData(slug, country) {
+// Cached per visibility bucket (IN vs everyone else — only two buckets
+// exist, see lib/visibility.js) since getRelatedToolsForBlog is country-
+// dependent. This removes the Mongo round trip from the critical path on
+// cache hits. The view-increment write is kept out of this cached function
+// (see the page component below) so it still fires every request.
+const getCachedBlogData = unstable_cache(
+  async (slug, bucket) => fetchBlogData(slug, bucket),
+  ['blog-data'],
+  { revalidate: 120, tags: ['blog'] }
+);
+
+async function fetchBlogData(slug, country) {
   await connectDB();
   const blog = await Blog.findOne({ slug, status: 'published' }).populate('author', 'name avatar').lean();
   if (!blog) return null;
-  Blog.findByIdAndUpdate(blog._id, { $inc: { views: 1 } }).exec();
 
   const publishedAt = blog.publishedAt || blog.createdAt;
 
@@ -88,9 +100,13 @@ async function getData(slug, country) {
 export default async function BlogPostPage({ params }) {
   const { slug } = await params;
   const country = await getRequestCountry();
-  const data = await getData(slug, country);
+  const bucket = isIndiaUser(country) ? 'IN' : 'WORLD';
+  const data = await getCachedBlogData(slug, bucket);
   if (!data) notFound();
   const { blog, related, relatedTools, prev, next } = data;
+
+  await connectDB();
+  Blog.findByIdAndUpdate(blog._id, { $inc: { views: 1 } }).exec();
 
   const pageUrl = buildCanonical(`/blog/${slug}`);
   const authorName = blog.author?.name || 'ToolifHub Team';
