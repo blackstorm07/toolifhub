@@ -14,6 +14,15 @@ const nextConfig = {
       { protocol: 'http', hostname: '**' },
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: '/blog/10-youtube-seo-tips-to-rank-number-1-in-2024',
+        destination: '/blog/10-youtube-seo-tips-to-rank-number-1-in-2026',
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {
