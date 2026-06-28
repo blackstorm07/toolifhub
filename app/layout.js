@@ -2,6 +2,7 @@ import { Inter, JetBrains_Mono } from 'next/font/google';
 import { ThemeProvider } from '@/components/layout/ThemeProvider';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
+import GoogleAdsTag from '@/components/analytics/GoogleAdsTag';
 import GoogleTagManager from '@/components/analytics/GoogleTagManager';
 import GoogleTagManagerNoScript from '@/components/analytics/GoogleTagManagerNoScript';
 import GTMPageTracker from '@/components/analytics/GTMPageTracker';
@@ -36,6 +37,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning className={`${inter.variable} ${jetbrainsMono.variable}`}>
       <head>
+        <GoogleAdsTag />
         <GoogleTagManager />
         <AdSenseScript />
       </head>

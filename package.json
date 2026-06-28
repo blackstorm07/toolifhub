@@ -10,7 +10,8 @@
     "seed": "node scripts/seed.js",
     "seed:seo-tools": "node scripts/add-seo-tools.js",
     "seed:blog-ai-tools-2026": "node scripts/add-blog-ai-tools-2026.js",
-    "seed:blogs-seo": "node scripts/seed-blogs-seo.js"
+    "seed:blogs-seo": "node scripts/seed-blogs-seo.js",
+    "seed:blogs-batch3": "node scripts/add-blog-posts-batch3.js"
   },
   "dependencies": {
     "@imgly/background-removal": "^1.7.0",

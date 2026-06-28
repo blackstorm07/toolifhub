@@ -1,6 +1,14 @@
 import mongoose from 'mongoose';
 import '@/models/User';
 
+const blogFaqSchema = new mongoose.Schema(
+  {
+    question: { type: String, required: true },
+    answer: { type: String, required: true },
+  },
+  { _id: false }
+);
+
 const blogSchema = new mongoose.Schema(
   {
     title: {
@@ -37,9 +45,20 @@ const blogSchema = new mongoose.Schema(
       type: [String],
       default: [],
     },
-    status: {
+    category: {
       type: String,
-      enum: ['published', 'draft'],
+      default: '',
+    },
+    faqs: {
+      type: [blogFaqSchema],
+      default: [],
+    },
+    status: {
+      // 'scheduled' posts become publicly visible automatically once
+      // publishedAt passes — see lib/seo/blogVisibility.js. No cron job
+      // needed since visibility is computed at query time.
+      type: String,
+      enum: ['published', 'draft', 'scheduled'],
       default: 'published',
     },
     featured: {
@@ -47,6 +66,10 @@ const blogSchema = new mongoose.Schema(
       default: false,
     },
     views: {
+      type: Number,
+      default: 0,
+    },
+    likes: {
       type: Number,
       default: 0,
     },
@@ -68,6 +91,8 @@ const blogSchema = new mongoose.Schema(
 blogSchema.index({ status: 1 });
 blogSchema.index({ featured: -1 });
 blogSchema.index({ publishedAt: -1 });
+blogSchema.index({ category: 1 });
+blogSchema.index({ tags: 1 });
 blogSchema.index({ title: 'text', content: 'text', tags: 'text' });
 
 const Blog = mongoose.models.Blog || mongoose.model('Blog', blogSchema);

@@ -9,7 +9,8 @@ import BlogTopAd from '@/components/ads/BlogTopAd';
 import BlogMiddleAd from '@/components/ads/BlogMiddleAd';
 import SidebarAd from '@/components/ads/SidebarAd';
 import { splitBlogContent } from '@/lib/ads/splitBlogContent';
-import JsonLd, { buildBlogPostingSchema, buildBreadcrumbSchema } from '@/components/seo/JsonLd';
+import Link from 'next/link';
+import JsonLd, { buildBlogPostingSchema, buildBreadcrumbSchema, buildFaqSchema } from '@/components/seo/JsonLd';
 import { buildPageMetadata, buildCanonical } from '@/lib/seo/metadata';
 import { generateBlogKeywords } from '@/lib/seo/keywords';
 import { BLOG_KEYWORD_POOL, mergeKeywords } from '@/lib/seo/keywordStrategy';
@@ -17,17 +18,22 @@ import { calculateReadingTime } from '@/lib/seo/readingTime';
 import { getRelatedBlogsForBlog, getRelatedToolsForBlog } from '@/lib/seo/internalLinks';
 import { getRequestCountry } from '@/lib/geo';
 import { isIndiaUser } from '@/lib/visibility';
+import { publishedBlogFilter } from '@/lib/seo/blogVisibility';
+import { getBlogCategoryName } from '@/lib/blog/categories';
 import ReadingProgress from '@/components/blog/ReadingProgress';
 import ArticleHero from '@/components/blog/ArticleHero';
 import ArticleWithToc from '@/components/blog/ArticleWithToc';
 import AuthorCard from '@/components/blog/AuthorCard';
 import ArticleNav from '@/components/blog/ArticleNav';
+import ArticleFaq from '@/components/blog/ArticleFaq';
+import ArticleCta from '@/components/blog/ArticleCta';
+import LikeButton from '@/components/blog/LikeButton';
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
   try {
     await connectDB();
-    const blog = await Blog.findOne({ slug, status: 'published' }).populate('author', 'name').lean();
+    const blog = await Blog.findOne(publishedBlogFilter({ slug })).populate('author', 'name').lean();
     if (!blog) return {};
     const title = blog.seoTitle || `${blog.title} | ToolifHub`;
     const lowerTitle = blog.title.toLowerCase();
@@ -76,7 +82,7 @@ const getCachedBlogData = unstable_cache(
 
 async function fetchBlogData(slug, country) {
   await connectDB();
-  const blog = await Blog.findOne({ slug, status: 'published' }).populate('author', 'name avatar').lean();
+  const blog = await Blog.findOne(publishedBlogFilter({ slug })).populate('author', 'name avatar').lean();
   if (!blog) return null;
 
   const publishedAt = blog.publishedAt || blog.createdAt;
@@ -84,11 +90,11 @@ async function fetchBlogData(slug, country) {
   const [related, relatedTools, prev, next] = await Promise.all([
     getRelatedBlogsForBlog(blog),
     getRelatedToolsForBlog(blog, 6, country),
-    Blog.findOne({ status: 'published', slug: { $ne: blog.slug }, publishedAt: { $lt: publishedAt } })
+    Blog.findOne(publishedBlogFilter({ slug: { $ne: blog.slug }, publishedAt: { $lt: publishedAt } }))
       .sort({ publishedAt: -1 })
       .select('title slug')
       .lean(),
-    Blog.findOne({ status: 'published', slug: { $ne: blog.slug }, publishedAt: { $gt: publishedAt } })
+    Blog.findOne(publishedBlogFilter({ slug: { $ne: blog.slug }, publishedAt: { $gt: publishedAt } }))
       .sort({ publishedAt: 1 })
       .select('title slug')
       .lean(),
@@ -131,6 +137,8 @@ export default async function BlogPostPage({ params }) {
       wordCount: readingTime.wordCount,
     }),
   ];
+  const faqSchema = blog.faqs?.length ? buildFaqSchema(blog.faqs) : null;
+  if (faqSchema) schemas.push(faqSchema);
 
   return (
     <>
@@ -179,18 +187,41 @@ export default async function BlogPostPage({ params }) {
 
           <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_16rem] gap-12">
             <div className="max-w-[820px] w-full mx-auto xl:mx-0">
-              {blog.tags?.length > 0 && (
+              {(blog.category || blog.tags?.length > 0) && (
                 <div className="flex flex-wrap gap-2 mt-10">
-                  {blog.tags.map((tag) => (
-                    <span
+                  {blog.category && (
+                    <Link
+                      href={`/blog/category/${blog.category}`}
+                      className="text-xs font-medium text-white bg-brand-500 hover:bg-brand-600 px-3 py-1 rounded-full transition-colors"
+                    >
+                      {getBlogCategoryName(blog.category)}
+                    </Link>
+                  )}
+                  {blog.tags?.map((tag) => (
+                    <Link
                       key={tag}
-                      className="text-xs font-medium text-muted-foreground bg-muted px-3 py-1 rounded-full"
+                      href={`/blog/tag/${encodeURIComponent(tag)}`}
+                      className="text-xs font-medium text-muted-foreground bg-muted hover:bg-muted/70 px-3 py-1 rounded-full transition-colors"
                     >
                       #{tag}
-                    </span>
+                    </Link>
                   ))}
                 </div>
               )}
+
+              <div className="mt-6">
+                <LikeButton slug={blog.slug} initialLikes={blog.likes || 0} />
+              </div>
+
+              {blog.faqs?.length > 0 && (
+                <div className="mt-12">
+                  <ArticleFaq faqs={blog.faqs} />
+                </div>
+              )}
+
+              <div className="mt-10">
+                <ArticleCta tool={relatedTools[0]} />
+              </div>
 
               <div className="mt-10">
                 <AuthorCard name={authorName} avatar={blog.author?.avatar} />

@@ -22,7 +22,7 @@ const isServer = typeof window === 'undefined';
 export const config = {
   app: {
     name: optionalEnv('NEXT_PUBLIC_APP_NAME', 'ToolifHub'),
-    url: optionalEnv('NEXT_PUBLIC_APP_URL', 'http://localhost:3000'),
+    url: optionalEnv('NEXT_PUBLIC_APP_URL', 'https://toolifhub.com'),
     description: 'One Hub. Unlimited Tools. — Free online tools for everyone.',
     tagline: 'One Hub. Unlimited Tools.',
   },
@@ -42,6 +42,7 @@ export const config = {
   analytics: {
     gtmId: optionalEnv('NEXT_PUBLIC_GTM_ID', ''),
     gaId: optionalEnv('NEXT_PUBLIC_GA_ID', ''),
+    googleAdsId: optionalEnv('NEXT_PUBLIC_GOOGLE_ADS_ID', ''),
   },
   ads: {
     adsenseClient: optionalEnv('NEXT_PUBLIC_GOOGLE_ADSENSE_CLIENT', ''),

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Blog from '@/models/Blog';
+import { publishedBlogFilter } from '@/lib/seo/blogVisibility';
 
 export async function GET(request) {
   try {
@@ -9,10 +10,15 @@ export async function GET(request) {
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '12');
     const featured = searchParams.get('featured');
+    const category = searchParams.get('category');
+    const tag = searchParams.get('tag');
     const skip = (page - 1) * limit;
 
-    const query = { status: 'published' };
-    if (featured === 'true') query.featured = true;
+    const extra = {};
+    if (featured === 'true') extra.featured = true;
+    if (category) extra.category = category;
+    if (tag) extra.tags = tag;
+    const query = publishedBlogFilter(extra);
 
     const [blogs, total] = await Promise.all([
       Blog.find(query)

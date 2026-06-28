@@ -1,12 +1,15 @@
 import connectDB from '@/lib/mongodb';
 import Blog from '@/models/Blog';
-import Link from 'next/link';
-import { ArrowRight, Calendar, Clock, FileText } from 'lucide-react';
-import OptimizedImage from '@/components/seo/OptimizedImage';
+import { FileText, Flame, Star } from 'lucide-react';
 import { buildPageMetadata, buildCanonical } from '@/lib/seo/metadata';
 import JsonLd, { buildWebPageSchema, buildBreadcrumbSchema } from '@/components/seo/JsonLd';
-import { calculateReadingTime, formatReadingTime } from '@/lib/seo/readingTime';
-import { format } from 'date-fns';
+import { publishedBlogFilter } from '@/lib/seo/blogVisibility';
+import BlogCard from '@/components/blog/BlogCard';
+import BlogCategoryPills from '@/components/blog/BlogCategoryPills';
+import BlogSearchForm from '@/components/blog/BlogSearchForm';
+import BlogPagination from '@/components/blog/BlogPagination';
+
+const PAGE_SIZE = 9;
 
 export const metadata = buildPageMetadata({
   title: 'Blog — Tips, Tutorials & Tools',
@@ -21,106 +24,109 @@ export const metadata = buildPageMetadata({
   ],
 });
 
-async function getBlogs() {
+async function getBlogPageData(page) {
   try {
     await connectDB();
-    return Blog.find({ status: 'published' })
-      .select('-content')
-      .sort({ publishedAt: -1 })
-      .lean();
+    const filter = publishedBlogFilter();
+    const [featured, popular, total, latest] = await Promise.all([
+      Blog.find(publishedBlogFilter({ featured: true }))
+        .select('-content')
+        .sort({ publishedAt: -1 })
+        .limit(3)
+        .lean(),
+      Blog.find(filter).select('-content').sort({ views: -1 }).limit(5).lean(),
+      Blog.countDocuments(filter),
+      Blog.find(filter)
+        .select('-content')
+        .sort({ publishedAt: -1 })
+        .skip((page - 1) * PAGE_SIZE)
+        .limit(PAGE_SIZE)
+        .lean(),
+    ]);
+    return { featured, popular, latest, totalPages: Math.max(1, Math.ceil(total / PAGE_SIZE)) };
   } catch {
-    return [];
+    return { featured: [], popular: [], latest: [], totalPages: 1 };
   }
 }
 
-export default async function BlogPage() {
-  const blogs = await getBlogs();
+export default async function BlogPage({ searchParams }) {
+  const { page: pageParam } = await searchParams;
+  const page = Math.max(1, parseInt(pageParam, 10) || 1);
+  const { featured, popular, latest, totalPages } = await getBlogPageData(page);
+  const hasAnyPosts = featured.length > 0 || latest.length > 0;
 
   return (
     <>
-    <JsonLd
-      data={[
-        buildWebPageSchema({
-          name: 'Blog — Tips, Tutorials & Tools',
-          description: 'Read our latest articles on productivity, SEO, YouTube growth, AI tools, and online utilities.',
-          url: buildCanonical('/blog'),
-        }),
-        buildBreadcrumbSchema([{ label: 'Blog', href: '/blog' }]),
-      ]}
-    />
-    <div className="page">
-      <div className="mb-6">
-        <p className="text-sm font-semibold text-brand-500 uppercase tracking-wider mb-2">Tips & Tutorials</p>
-        <h1 className="text-4xl font-bold">The ToolifHub Blog</h1>
-        <p className="text-muted-foreground mt-3 text-lg">Productivity tips, SEO tutorials, developer guides and more.</p>
-      </div>
-
-      {blogs.length === 0 ? (
-        <div className="text-center py-16 text-muted-foreground">
-          <FileText className="w-10 h-10 mx-auto mb-4" aria-hidden="true" />
-          <p className="font-medium text-lg">No posts yet</p>
-          <p className="text-sm mt-2">Check back soon — great content is coming!</p>
+      <JsonLd
+        data={[
+          buildWebPageSchema({
+            name: 'Blog — Tips, Tutorials & Tools',
+            description: 'Read our latest articles on productivity, SEO, YouTube growth, AI tools, and online utilities.',
+            url: buildCanonical('/blog'),
+          }),
+          buildBreadcrumbSchema([{ label: 'Blog', href: '/blog' }]),
+        ]}
+      />
+      <div className="page">
+        <div className="mb-6">
+          <p className="text-sm font-semibold text-brand-500 uppercase tracking-wider mb-2">Tips & Tutorials</p>
+          <h1 className="text-4xl font-bold">The ToolifHub Blog</h1>
+          <p className="text-muted-foreground mt-3 text-lg">Productivity tips, SEO tutorials, developer guides and more.</p>
         </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {blogs.map((blog) => {
-            const readingTime = blog.excerpt ? calculateReadingTime(blog.excerpt) : { minutes: 5 };
-            return (
-              <Link
-                key={blog._id}
-                href={`/blog/${blog.slug}`}
-                className="group flex flex-col bg-card border border-border rounded-2xl overflow-hidden hover:border-brand-300 dark:hover:border-brand-700 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200"
-              >
-                {blog.featuredImage ? (
-                  <div className="relative aspect-video overflow-hidden bg-muted">
-                    <OptimizedImage
-                      src={blog.featuredImage}
-                      alt={blog.title}
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-300"
-                      sizes="(max-width: 768px) 100vw, 33vw"
-                    />
-                  </div>
-                ) : (
-                  <div className="aspect-video bg-gradient-to-br from-brand-100 to-purple-100 dark:from-brand-900/30 dark:to-purple-900/30 flex items-center justify-center">
-                    <FileText className="w-10 h-10 text-brand-400" aria-hidden="true" />
-                  </div>
-                )}
 
-                <div className="p-6 flex flex-col flex-1">
-                  <div className="flex flex-wrap gap-2 mb-3">
-                    {blog.tags?.slice(0, 2).map((tag) => (
-                      <span key={tag} className="text-xs font-medium text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-900/30 px-2.5 py-1 rounded-full">
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                  <h2 className="font-bold text-lg leading-tight mb-3 group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors line-clamp-2">
-                    {blog.title}
+        <BlogSearchForm />
+        <BlogCategoryPills />
+
+        {!hasAnyPosts ? (
+          <div className="text-center py-16 text-muted-foreground">
+            <FileText className="w-10 h-10 mx-auto mb-4" aria-hidden="true" />
+            <p className="font-medium text-lg">No posts yet</p>
+            <p className="text-sm mt-2">Check back soon — great content is coming!</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-10">
+            <div className="space-y-12">
+              {page === 1 && featured.length > 0 && (
+                <section>
+                  <h2 className="flex items-center gap-2 text-lg font-bold mb-4">
+                    <Star className="w-5 h-5 text-brand-500" aria-hidden="true" /> Featured Articles
                   </h2>
-                  {blog.excerpt && (
-                    <p className="text-sm text-muted-foreground line-clamp-3 mb-4 flex-1">{blog.excerpt}</p>
-                  )}
-                  <div className="flex items-center justify-between text-xs text-muted-foreground mt-auto">
-                    <div className="flex items-center gap-3">
-                      <span className="flex items-center gap-1.5">
-                        <Calendar className="w-3.5 h-3.5" />
-                        {format(new Date(blog.publishedAt || blog.createdAt), 'MMM d, yyyy')}
-                      </span>
-                      <span className="flex items-center gap-1.5">
-                        <Clock className="w-3.5 h-3.5" />
-                        {formatReadingTime(readingTime.minutes)}
-                      </span>
-                    </div>
-                    <ArrowRight className="w-4 h-4 group-hover:text-brand-500 group-hover:translate-x-0.5 transition-all" />
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {featured.map((blog) => <BlogCard key={blog._id} blog={blog} />)}
                   </div>
+                </section>
+              )}
+
+              <section>
+                <h2 className="text-lg font-bold mb-4">Latest Articles</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {latest.map((blog) => <BlogCard key={blog._id} blog={blog} />)}
                 </div>
-              </Link>
-            );
-          })}
-        </div>
-      )}
-    </div>
+                <BlogPagination currentPage={page} totalPages={totalPages} basePath="/blog" />
+              </section>
+            </div>
+
+            <aside className="space-y-4">
+              <h2 className="flex items-center gap-2 text-lg font-bold">
+                <Flame className="w-5 h-5 text-orange-500" aria-hidden="true" /> Popular Posts
+              </h2>
+              <div className="space-y-3">
+                {popular.map((blog, i) => (
+                  <a key={blog._id} href={`/blog/${blog.slug}`} className="flex gap-3 group">
+                    <span className="text-2xl font-bold text-muted-foreground/40 w-6 flex-shrink-0">{i + 1}</span>
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium leading-snug line-clamp-2 group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">
+                        {blog.title}
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-1">{blog.views || 0} views</p>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </aside>
+          </div>
+        )}
+      </div>
     </>
   );
 }

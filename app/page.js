@@ -6,6 +6,7 @@ import Blog from '@/models/Blog';
 import { getVisibleCategoriesWithCounts } from '@/lib/categories';
 import { getRequestCountry } from '@/lib/geo';
 import { canViewTool, visibilityMongoFilter, isIndiaUser } from '@/lib/visibility';
+import { publishedBlogFilter } from '@/lib/seo/blogVisibility';
 import Hero from '@/components/home/Hero';
 import FeaturedCategories from '@/components/home/FeaturedCategories';
 import ToolsSection from '@/components/home/ToolsSection';
@@ -68,7 +69,7 @@ async function fetchHomeData(country) {
         .sort({ createdAt: -1 })
         .limit(16)
         .lean(),
-      Blog.find({ status: 'published' })
+      Blog.find(publishedBlogFilter())
         .select('-content')
         .sort({ publishedAt: -1 })
         .limit(3)
