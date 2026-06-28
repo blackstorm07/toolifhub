@@ -19,7 +19,7 @@ import { HOMEPAGE_KEYWORDS } from '@/lib/seo/keywordStrategy';
 export const metadata = buildPageMetadata({
   title: `${SITE_NAME} — One Hub. Unlimited Tools.`,
   description:
-    'Free online tools for YouTube, SEO, developers, AI, productivity and more. 500+ tools — no sign-up required.',
+    'Free online tools for YouTube, SEO, developers, AI, productivity and more. 50+ tools — no sign-up required.',
   path: '/',
   keywords: HOMEPAGE_KEYWORDS,
   absoluteTitle: true,

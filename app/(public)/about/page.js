@@ -41,7 +41,7 @@ export default function AboutPage() {
         </p>
         <h2>What We Offer</h2>
         <p>
-          500+ tools spanning YouTube optimization, SEO analysis, developer utilities, text processing, image editing, calculators, converters, and more. Each tool is designed with care, optimized for speed, and continuously improved based on user feedback.
+          50+ tools spanning YouTube optimization, SEO analysis, developer utilities, text processing, image editing, calculators, converters, and more. Each tool is designed with care, optimized for speed, and continuously improved based on user feedback.
         </p>
       </div>
 

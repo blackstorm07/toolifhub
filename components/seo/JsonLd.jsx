@@ -88,7 +88,7 @@ export function buildWebSiteSchema() {
     '@type': 'WebSite',
     name: SITE_NAME,
     url: SITE_URL,
-    description: 'Free online tools for everyone. 500+ tools, no sign-up required.',
+    description: 'Free online tools for everyone. 50+ tools, no sign-up required.',
     publisher: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
     potentialAction: {
       '@type': 'SearchAction',

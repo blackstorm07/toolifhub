@@ -2,7 +2,7 @@ import SearchBar from '@/components/search/SearchBar';
 import Link from 'next/link';
 import { ArrowRight, Zap } from 'lucide-react';
 
-const highlights = ['500+ Free Tools', 'No Sign Up Required', 'Mobile Friendly', 'Lightning Fast'];
+const highlights = ['50+ Free Tools', 'No Sign Up Required', 'Mobile Friendly', 'Lightning Fast'];
 
 export default function Hero() {
   return (

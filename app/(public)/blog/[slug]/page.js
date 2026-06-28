@@ -25,7 +25,7 @@ export async function generateMetadata({ params }) {
   const { slug } = await params;
   try {
     await connectDB();
-    const blog = await Blog.findOne({ slug, status: 'published' }).lean();
+    const blog = await Blog.findOne({ slug, status: 'published' }).populate('author', 'name').lean();
     if (!blog) return {};
     const title = blog.seoTitle || `${blog.title} | ToolifHub`;
     const lowerTitle = blog.title.toLowerCase();
@@ -41,6 +41,7 @@ export async function generateMetadata({ params }) {
       relevantPool,
       generateBlogKeywords({ title: blog.title, tags: blog.tags || [] })
     );
+    const publishedAt = blog.publishedAt || blog.createdAt;
     return buildPageMetadata({
       title,
       description: blog.seoDescription || blog.excerpt,
@@ -51,6 +52,9 @@ export async function generateMetadata({ params }) {
         `${buildCanonical('/api/og')}?title=${encodeURIComponent(blog.title)}&subtitle=${encodeURIComponent('ToolifHub Blog')}`,
       ogType: 'article',
       absoluteTitle: !!blog.seoTitle,
+      articlePublishedTime: new Date(publishedAt).toISOString(),
+      articleModifiedTime: new Date(blog.updatedAt || publishedAt).toISOString(),
+      articleAuthor: blog.author?.name,
     });
   } catch {
     return {};

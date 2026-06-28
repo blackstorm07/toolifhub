@@ -6,7 +6,7 @@ import { buildPageMetadata } from '@/lib/seo/metadata';
 
 export const metadata = buildPageMetadata({
   title: 'All Tool Categories',
-  description: 'Browse all 500+ free online tools organized by category — YouTube, SEO, Developer, Text, Image, Calculator tools and more.',
+  description: 'Browse all 50+ free online tools organized by category — YouTube, SEO, Developer, Text, Image, Calculator tools and more.',
   path: '/categories',
   keywords: ['tool categories', 'free online tools', 'youtube tools', 'seo tools'],
 });
