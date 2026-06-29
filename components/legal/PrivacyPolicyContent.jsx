@@ -75,7 +75,7 @@ export default function PrivacyPolicyContent() {
           </li>
           <li>
             <LegalHighlight>Analytics data:</LegalHighlight> Aggregated, anonymized usage
-            statistics via Google Analytics 4 to understand how visitors use our tools
+            statistics via Google Tag Manager to understand how visitors use our tools
             and improve performance.
           </li>
           <li>
@@ -135,17 +135,9 @@ export default function PrivacyPolicyContent() {
         </p>
         <ul className="legal-list">
           <li>
-            <LegalHighlight>Analytics:</LegalHighlight> Google Analytics uses cookies to
-            measure traffic and usage patterns. You can opt out via the{' '}
-            <a
-              href="https://tools.google.com/dlpage/gaoptout"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="legal-link"
-            >
-              Google Analytics Opt-out Browser Add-on
-            </a>
-            .
+            <LegalHighlight>Analytics:</LegalHighlight> Google Tag Manager may use cookies to
+            measure traffic and usage patterns. You can block or delete these cookies in
+            your browser settings.
           </li>
           <li>
             <LegalHighlight>Advertising:</LegalHighlight> Google AdSense may use cookies
@@ -185,7 +177,7 @@ export default function PrivacyPolicyContent() {
         </p>
         <ul className="legal-list">
           <li>
-            <LegalHighlight>Google Analytics</LegalHighlight> — website usage analytics.{' '}
+            <LegalHighlight>Google Tag Manager</LegalHighlight> — website usage measurement.{' '}
             <a
               href="https://policies.google.com/privacy"
               target="_blank"
@@ -244,8 +236,8 @@ export default function PrivacyPolicyContent() {
             deleted.
           </li>
           <li>
-            <LegalHighlight>Analytics data:</LegalHighlight> Stored in aggregated form per
-            Google Analytics retention settings (default 14 months).
+            <LegalHighlight>Analytics data:</LegalHighlight> Retention depends on tags
+            configured in Google Tag Manager and their respective providers.
           </li>
           <li>
             <LegalHighlight>Contact form submissions:</LegalHighlight> Retained as long

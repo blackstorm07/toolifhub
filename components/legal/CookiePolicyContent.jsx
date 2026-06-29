@@ -47,7 +47,7 @@ export default function CookiePolicyContent() {
             These cannot be disabled without affecting basic functionality.
           </li>
           <li>
-            <LegalHighlight>Analytics cookies:</LegalHighlight> Set by Google Analytics to
+            <LegalHighlight>Analytics cookies:</LegalHighlight> Set by Google Tag Manager to
             help us understand how visitors interact with our tools and pages, so we can
             improve the experience.
           </li>
@@ -67,7 +67,7 @@ export default function CookiePolicyContent() {
         <p>We use cookies and similar technologies to:</p>
         <ul className="legal-list">
           <li>Remember your display preferences across visits</li>
-          <li>Measure and analyze site traffic and tool usage with Google Analytics</li>
+          <li>Measure and analyze site traffic and tool usage with Google Tag Manager</li>
           <li>Serve and personalize advertisements through Google AdSense</li>
           <li>Maintain the security and proper functioning of our website</li>
         </ul>
@@ -96,15 +96,7 @@ export default function CookiePolicyContent() {
           <li>Block all cookies, or only third-party cookies</li>
           <li>Delete existing cookies from your device</li>
           <li>
-            Opt out of Google Analytics tracking via the{' '}
-            <a
-              href="https://tools.google.com/dlpage/gaoptout"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="legal-link"
-            >
-              Google Analytics Opt-out Browser Add-on
-            </a>
+            Block or delete analytics cookies through your browser settings
           </li>
           <li>
             Manage personalized advertising through{' '}

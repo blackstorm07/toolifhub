@@ -76,16 +76,12 @@ export default function AdminAnalyticsPage() {
             : <AlertTriangle className="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" aria-hidden="true" />}
           <span>
           {process.env.NEXT_PUBLIC_GTM_ID
-            ? `Google Tag Manager is connected (ID: ${process.env.NEXT_PUBLIC_GTM_ID}). Configure GA4 and other tags in your `
+            ? `Google Tag Manager is connected (ID: ${process.env.NEXT_PUBLIC_GTM_ID}). Manage tags and triggers in your `
             : 'Google Tag Manager is not configured. Set NEXT_PUBLIC_GTM_ID in .env.local (local) and in Vercel → Project → Settings → Environment Variables (Production + Preview), then redeploy.'}
           {process.env.NEXT_PUBLIC_GTM_ID && (
             <a href="https://tagmanager.google.com" target="_blank" rel="noopener noreferrer" className="text-brand-500 hover:underline">GTM dashboard</a>
           )}
-          {process.env.NEXT_PUBLIC_GTM_ID && '. GA4 reports are available in '}
-          {process.env.NEXT_PUBLIC_GTM_ID && (
-            <a href="https://analytics.google.com" target="_blank" rel="noopener noreferrer" className="text-brand-500 hover:underline">Google Analytics</a>
-          )}
-          {process.env.NEXT_PUBLIC_GTM_ID && ' once a GA4 Configuration tag is published in GTM.'}
+          {process.env.NEXT_PUBLIC_GTM_ID && '.'}
           </span>
         </p>
       </div>

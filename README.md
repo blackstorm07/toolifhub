@@ -21,7 +21,7 @@ Open `.env.local` and fill in these 5 values:
 MONGODB_URI=mongodb+srv://...          # Your MongoDB Atlas connection string
 JWT_SECRET=your-super-secret-32-chars  # Any random 32+ char string
 ADMIN_PASSWORD=YourSecurePassword123!  # Password for admin dashboard
-NEXT_PUBLIC_GOOGLE_ANALYTICS_ID=G-XXX # Optional: your GA4 Measurement ID
+NEXT_PUBLIC_GTM_ID=GTM-XXXXXXX          # Optional: Google Tag Manager container ID
 NEXT_PUBLIC_GOOGLE_ADSENSE_CLIENT=ca-pub-XXX # Optional: your AdSense Publisher ID
 ```
 
@@ -67,7 +67,7 @@ toolifhub/
 │   └── robots.js          # robots.txt
 ├── components/
 │   ├── ads/               # AdSense components
-│   ├── analytics/         # Google Analytics 4
+│   ├── analytics/         # Google Tag Manager
 │   ├── home/              # Homepage sections
 │   ├── layout/            # Header, Footer, ThemeProvider
 │   ├── search/            # Search bar & modal
@@ -83,7 +83,7 @@ toolifhub/
 ├── lib/                   # Core utilities
 │   ├── mongodb.js         # Mongoose singleton connection
 │   ├── auth.js            # JWT auth helpers
-│   ├── analytics.js       # GA4 tracking helpers
+│   ├── analytics.js       # GTM dataLayer event helpers
 │   └── utils.js           # Utility functions
 ├── models/                # Mongoose schemas
 ├── scripts/
@@ -104,7 +104,7 @@ toolifhub/
 | UI Components | Shadcn/UI + Radix UI |
 | Database | MongoDB Atlas + Mongoose |
 | Auth | JWT (httpOnly cookies, 7-day expiry) |
-| Analytics | Google Analytics 4 |
+| Analytics | Google Tag Manager |
 | Ads | Google AdSense |
 | Theme | next-themes (dark/light mode) |
 | Notifications | react-hot-toast |
@@ -209,5 +209,5 @@ Optional (site works without these, just disables ads/analytics):
 
 | Variable | Description |
 |----------|-------------|
-| `NEXT_PUBLIC_GOOGLE_ANALYTICS_ID` | GA4 Measurement ID (G-XXXXXXXX) |
+| `NEXT_PUBLIC_GTM_ID` | Google Tag Manager container ID (GTM-XXXXXXXX) |
 | `NEXT_PUBLIC_GOOGLE_ADSENSE_CLIENT` | AdSense publisher ID (ca-pub-XXXXXXXX) |

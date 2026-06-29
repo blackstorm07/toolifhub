@@ -38,7 +38,6 @@ export default function AdminSettingsPage() {
     appName: process.env.NEXT_PUBLIC_APP_NAME,
     appUrl: process.env.NEXT_PUBLIC_APP_URL,
     gtmId: process.env.NEXT_PUBLIC_GTM_ID,
-    gaId: process.env.NEXT_PUBLIC_GA_ID,
     googleAdsId: process.env.NEXT_PUBLIC_GOOGLE_ADS_ID,
     adsenseClient: process.env.NEXT_PUBLIC_GOOGLE_ADSENSE_CLIENT,
   };
@@ -59,7 +58,6 @@ export default function AdminSettingsPage() {
         <EnvRow label="App URL" envKey="NEXT_PUBLIC_APP_URL" value={config.appUrl} required />
         <EnvRow label="JWT Secret" envKey="JWT_SECRET" value="[server-side only]" required />
         <EnvRow label="Google Tag Manager ID" envKey="NEXT_PUBLIC_GTM_ID" value={config.gtmId} />
-        <EnvRow label="Google Analytics 4 ID (GTM reference)" envKey="NEXT_PUBLIC_GA_ID" value={config.gaId} />
         <EnvRow label="Google Ads ID (gtag.js)" envKey="NEXT_PUBLIC_GOOGLE_ADS_ID" value={config.googleAdsId} />
         <EnvRow label="Google AdSense Client ID" envKey="NEXT_PUBLIC_GOOGLE_ADSENSE_CLIENT" value={config.adsenseClient} />
       </div>

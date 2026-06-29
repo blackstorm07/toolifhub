@@ -41,7 +41,6 @@ export const config = {
   },
   analytics: {
     gtmId: optionalEnv('NEXT_PUBLIC_GTM_ID', ''),
-    gaId: optionalEnv('NEXT_PUBLIC_GA_ID', ''),
     googleAdsId: optionalEnv('NEXT_PUBLIC_GOOGLE_ADS_ID', ''),
   },
   ads: {
