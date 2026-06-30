@@ -21,6 +21,11 @@ const nextConfig = {
         destination: '/blog/10-youtube-seo-tips-to-rank-number-1-in-2026',
         permanent: true,
       },
+      {
+        source: '/tools/random-name-generator',
+        destination: '/tools/random-user-generator',
+        permanent: true,
+      },
     ];
   },
   async headers() {

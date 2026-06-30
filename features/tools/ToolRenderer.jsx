@@ -45,6 +45,8 @@ const toolRegistry = {
   // Utility Tools
   'qr-code-generator':     loadTool(() => import('./utility/QRCodeGenerator')),
   'color-picker':          loadTool(() => import('./utility/ColorPicker')),
+  'random-number-generator': loadTool(() => import('./utility/RandomNumberGenerator')),
+  'random-user-generator':   loadTool(() => import('./utility/RandomUserGenerator')),
 
   // Text Tools
   'word-counter':              loadTool(() => import('./text/WordCounter')),

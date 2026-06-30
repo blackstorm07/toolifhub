@@ -36,12 +36,10 @@ export const metadata = buildRootMetadata();
 export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning className={`${inter.variable} ${jetbrainsMono.variable}`}>
-      <head>
+      <body className="min-h-screen bg-background font-sans antialiased" suppressHydrationWarning>
         <GoogleAdsTag />
         <GoogleTagManager />
         <AdSenseScript />
-      </head>
-      <body className="min-h-screen bg-background font-sans antialiased" suppressHydrationWarning>
         <GoogleTagManagerNoScript />
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <GTMPageTracker />
